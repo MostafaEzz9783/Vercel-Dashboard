@@ -2,7 +2,7 @@ import { useState } from "react";
 import FinancialDistribution from "@/components/FinancialDistribution";
 import KPICards from "@/components/KPICards";
 import ScenarioContext from "@/components/ScenarioContext";
-import { occupancyOptions, operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
+import { operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
 
 function formatSAR(value) {
   return new Intl.NumberFormat("ar-SA", {
@@ -21,6 +21,7 @@ export default function FinancialStudy() {
   const netRevenue = revenue - operatorFeeAmount;
   const annualPerUnit = netRevenue / totalUnits;
   const monthlyPerUnit = annualPerUnit / 12;
+  const occupancyProgress = ((occupancy - 50) / 40) * 100;
 
   const kpis = {
     revenueAt100: scenarioData.revenueAt100,
@@ -57,26 +58,32 @@ export default function FinancialStudy() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 min-w-[240px]">
           <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
             نسبة الإشغال
           </p>
-          <div className="flex gap-1.5">
-            {occupancyOptions.map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setOccupancy(option)}
-                className="w-12 h-9 rounded-lg text-sm font-bold transition-all duration-200 border"
-                style={{
-                  backgroundColor: occupancy === option ? "#60a5fa" : "#1e1e2e",
-                  color: occupancy === option ? "#0f0f1a" : "#8b8ba7",
-                  borderColor: occupancy === option ? "#60a5fa" : "#2e2e3e",
-                }}
-              >
-                {option}%
-              </button>
-            ))}
+          <div className="w-full rounded-xl px-4 py-3 border" style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}>
+            <div className="text-center text-sm font-bold mb-3" style={{ color: "#60a5fa" }}>
+              {occupancy}%
+            </div>
+            <input
+              type="range"
+              min="50"
+              max="90"
+              step="10"
+              value={occupancy}
+              onChange={(event) => setOccupancy(Number(event.target.value))}
+              className="occupancy-slider w-full h-2 rounded-full appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to left, #60a5fa 0%, #60a5fa ${occupancyProgress}%, #2e2e3e ${occupancyProgress}%, #2e2e3e 100%)`,
+                accentColor: "#60a5fa",
+              }}
+            />
+            <div className="flex justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
+              <span>90%</span>
+              <span>70%</span>
+              <span>50%</span>
+            </div>
           </div>
         </div>
 

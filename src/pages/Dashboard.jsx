@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { BarChart2, Home } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import PropertyOverview from "@/components/PropertyOverview";
@@ -8,6 +9,13 @@ const tabs = [
   { key: "property", label: "ملخص العقار", icon: Home },
   { key: "financial", label: "دراسة مالية", icon: BarChart2 },
 ];
+
+const tabContentMotion = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: { duration: 0.3, ease: "easeOut" },
+};
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("property");
@@ -37,26 +45,41 @@ export default function Dashboard() {
 
         <div className="flex gap-1 border-b justify-center" style={{ borderColor: "#f3f4f6" }}>
           {tabs.map((tab) => (
-            <button
+            <motion.button
               key={tab.key}
+              type="button"
               onClick={() => setActiveTab(tab.key)}
               className="flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all duration-200 border-b-2 -mb-px"
+              whileHover={{ opacity: 0.88 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               style={{
                 borderColor: activeTab === tab.key ? "#60a5fa" : "transparent",
                 color: activeTab === tab.key ? "#60a5fa" : "#9ca3af",
                 backgroundColor: "transparent",
+                willChange: "opacity",
               }}
             >
               <tab.icon size={15} />
               {tab.label}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-6">
-        {activeTab === "property" && <PropertyOverview />}
-        {activeTab === "financial" && <FinancialStudy />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={tabContentMotion.initial}
+            animate={tabContentMotion.animate}
+            exit={tabContentMotion.exit}
+            transition={tabContentMotion.transition}
+            style={{ willChange: "transform, opacity" }}
+          >
+            {activeTab === "property" && <PropertyOverview />}
+            {activeTab === "financial" && <FinancialStudy />}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

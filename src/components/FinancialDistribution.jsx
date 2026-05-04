@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
   const ownerShare = (1 - kpis.operatorFeeRate) * 100;
   const operatorShare = kpis.operatorFeeRate * 100;
@@ -10,7 +12,12 @@ export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
   ];
 
   return (
-    <div className="rounded-2xl p-6 border" style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}>
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="rounded-2xl p-6 border"
+      style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", willChange: "transform" }}
+    >
       <h3 className="font-bold text-sm mb-4" style={{ color: "#f0f0fa" }}>
         التوزيع المالي
       </h3>
@@ -29,8 +36,20 @@ export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
       </div>
 
       <div className="flex rounded-full overflow-hidden h-3" style={{ backgroundColor: "#252538" }}>
-        <div className="h-full transition-all duration-500" style={{ width: `${ownerShare}%`, backgroundColor: "#60a5fa" }} />
-        <div className="h-full transition-all duration-500" style={{ width: `${operatorShare}%`, backgroundColor: "#f97316" }} />
+        <motion.div
+          className="h-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${ownerShare}%` }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          style={{ backgroundColor: "#60a5fa", willChange: "width" }}
+        />
+        <motion.div
+          className="h-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${operatorShare}%` }}
+          transition={{ duration: 0.5, ease: "easeInOut", delay: 0.05 }}
+          style={{ backgroundColor: "#f97316", willChange: "width" }}
+        />
       </div>
       <div className="flex justify-between mt-2">
         <div className="flex items-center gap-1">
@@ -46,6 +65,6 @@ export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
