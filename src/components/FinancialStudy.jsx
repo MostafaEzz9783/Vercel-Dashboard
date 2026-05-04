@@ -1,10 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { Expand, ExternalLink, FileDown, Minimize } from "lucide-react";
 import FinancialDistribution from "@/components/FinancialDistribution";
 import KPICards from "@/components/KPICards";
 import ScenarioContext from "@/components/ScenarioContext";
 import { operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
 
 let hasAnimatedFinancialStudyOnce = false;
+
+const MARKET_VALIDATION_URL =
+  "https://docs.google.com/spreadsheets/d/1OUJp3S0mw1uQtvlKQaiCCPxOiRWmdJ-RxNs2zR1gEQ4/edit";
+
+const actionButtonMotion = {
+  whileHover: { scale: 1.02, backgroundColor: "#252538", color: "#ffffff" },
+  transition: { duration: 0.2, ease: "easeOut" },
+};
 
 function formatSAR(value) {
   return new Intl.NumberFormat("ar-SA", {
@@ -13,11 +23,27 @@ function formatSAR(value) {
   }).format(Math.round(value));
 }
 
-export default function FinancialStudy() {
+const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
   const [scenario, setScenario] = useState("realistic");
   const [occupancy, setOccupancy] = useState(90);
   const [animateCountersFromZero, setAnimateCountersFromZero] = useState(!hasAnimatedFinancialStudyOnce);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
   const initialValuesRef = useRef({ scenario: "realistic", occupancy: 90 });
+  const sectionRef = useRef(null);
+
+  const setCombinedRef = (node) => {
+    sectionRef.current = node;
+
+    if (typeof forwardedRef === "function") {
+      forwardedRef(node);
+      return;
+    }
+
+    if (forwardedRef) {
+      forwardedRef.current = node;
+    }
+  };
 
   useEffect(() => {
     if (!animateCountersFromZero) {
@@ -45,6 +71,79 @@ export default function FinancialStudy() {
     }
   }, [scenario, occupancy, animateCountersFromZero]);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === sectionRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = async () => {
+    if (!sectionRef.current) {
+      return;
+    }
+
+    try {
+      if (document.fullscreenElement === sectionRef.current) {
+        await document.exitFullscreen();
+        return;
+      }
+
+      await sectionRef.current.requestFullscreen();
+    } catch (error) {
+      console.error("Failed to toggle fullscreen", error);
+    }
+  };
+
+  const exportToPdf = async () => {
+    if (!sectionRef.current) {
+      return;
+    }
+
+    setIsExportingPdf(true);
+
+    try {
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
+      const canvas = await html2canvas(sectionRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#0f0f1a",
+      });
+
+      const imageData = canvas.toDataURL("image/jpeg", 0.95);
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imageWidth = pageWidth;
+      const imageHeight = (canvas.height * imageWidth) / canvas.width;
+      const fittedHeight = Math.min(imageHeight, pageHeight);
+      const fittedWidth = imageHeight > pageHeight ? (canvas.width * pageHeight) / canvas.height : imageWidth;
+      const x = (pageWidth - fittedWidth) / 2;
+      const y = (pageHeight - fittedHeight) / 2;
+
+      pdf.addImage(imageData, "JPEG", x, y, fittedWidth, fittedHeight);
+      pdf.save("mathwaa-senam-olaya-projection.pdf");
+    } catch (error) {
+      console.error("Failed to export PDF", error);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
   const scenarioData = scenarios[scenario];
   const revenue = (scenarioData.revenueAt100 * occupancy) / 100;
   const operatorFeeAmount = revenue * operatorFee;
@@ -64,7 +163,55 @@ export default function FinancialStudy() {
   };
 
   return (
-    <div className="rounded-t-3xl -mx-6 px-6 pt-8 pb-12 mt-2" style={{ backgroundColor: "#0f0f1a" }}>
+    <section
+      ref={setCombinedRef}
+      className="rounded-t-3xl -mx-6 px-6 pt-8 pb-12 mt-2"
+      style={{ backgroundColor: "#0f0f1a" }}
+    >
+      <div className="flex flex-wrap items-center justify-center sm:justify-between gap-3 mb-6">
+        <div className="flex flex-wrap gap-3">
+          <motion.a
+            href={MARKET_VALIDATION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border"
+            style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", color: "#f0f0fa" }}
+            whileHover={actionButtonMotion.whileHover}
+            transition={actionButtonMotion.transition}
+          >
+            <span>Market Validation</span>
+            <motion.span whileHover={{ x: -2 }} transition={{ duration: 0.2, ease: "easeOut" }}>
+              <ExternalLink size={15} />
+            </motion.span>
+          </motion.a>
+
+          <motion.button
+            type="button"
+            onClick={exportToPdf}
+            disabled={isExportingPdf}
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border disabled:opacity-70"
+            style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", color: "#f0f0fa" }}
+            whileHover={actionButtonMotion.whileHover}
+            transition={actionButtonMotion.transition}
+          >
+            <FileDown size={15} />
+            <span>{isExportingPdf ? "جاري التصدير..." : "تصدير PDF"}</span>
+          </motion.button>
+
+          <motion.button
+            type="button"
+            onClick={toggleFullscreen}
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border"
+            style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", color: "#f0f0fa" }}
+            whileHover={actionButtonMotion.whileHover}
+            transition={actionButtonMotion.transition}
+          >
+            {isFullscreen ? <Minimize size={15} /> : <Expand size={15} />}
+            <span>{isFullscreen ? "إنهاء العرض" : "تكبير العرض"}</span>
+          </motion.button>
+        </div>
+      </div>
+
       <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-start sm:items-center justify-center mb-8">
         <div className="flex flex-col items-center gap-2">
           <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
@@ -152,6 +299,8 @@ export default function FinancialStudy() {
           <ScenarioContext scenario={scenario} occupancy={occupancy} />
         </div>
       </div>
-    </div>
+    </section>
   );
-}
+});
+
+export default FinancialStudy;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BarChart2, Home } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -19,6 +19,47 @@ const tabContentMotion = {
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("property");
+  const financialSectionRef = useRef(null);
+  const pendingFinancialScrollRef = useRef(false);
+
+  const scrollToFinancialSection = () => {
+    if (!financialSectionRef.current) {
+      return;
+    }
+
+    financialSectionRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
+
+  const handleTabChange = (nextTab) => {
+    if (nextTab === "financial" && activeTab === "financial") {
+      scrollToFinancialSection();
+      return;
+    }
+
+    if (nextTab === "financial") {
+      pendingFinancialScrollRef.current = true;
+    }
+
+    setActiveTab(nextTab);
+  };
+
+  useEffect(() => {
+    if (activeTab !== "financial" || !pendingFinancialScrollRef.current) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      scrollToFinancialSection();
+      pendingFinancialScrollRef.current = false;
+    }, 120);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Cairo', sans-serif" }} dir="rtl">
@@ -48,7 +89,7 @@ export default function Dashboard() {
             <motion.button
               key={tab.key}
               type="button"
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => handleTabChange(tab.key)}
               className="flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all duration-200 border-b-2 -mb-px"
               whileHover={{ opacity: 0.88 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
@@ -77,7 +118,7 @@ export default function Dashboard() {
             style={{ willChange: "transform, opacity" }}
           >
             {activeTab === "property" && <PropertyOverview />}
-            {activeTab === "financial" && <FinancialStudy />}
+            {activeTab === "financial" && <FinancialStudy ref={financialSectionRef} />}
           </motion.div>
         </AnimatePresence>
       </main>
