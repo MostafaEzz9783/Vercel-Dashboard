@@ -31,6 +31,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
   const [isExportingPdf, setIsExportingPdf] = useState(false);
   const initialValuesRef = useRef({ scenario: "realistic", occupancy: 90 });
   const sectionRef = useRef(null);
+  const exportContentRef = useRef(null);
 
   const setCombinedRef = (node) => {
     sectionRef.current = node;
@@ -101,22 +102,19 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
   };
 
   const exportToPdf = async () => {
-    if (!sectionRef.current) {
+    if (!exportContentRef.current) {
       return;
     }
 
     setIsExportingPdf(true);
 
     try {
-      await new Promise((resolve) => window.requestAnimationFrame(resolve));
-      await new Promise((resolve) => window.requestAnimationFrame(resolve));
-
       const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
         import("html2canvas"),
         import("jspdf"),
       ]);
 
-      const canvas = await html2canvas(sectionRef.current, {
+      const canvas = await html2canvas(exportContentRef.current, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#0f0f1a",
@@ -171,7 +169,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
       className="rounded-t-3xl -mx-6 px-6 pt-8 pb-12 mt-2"
       style={{ backgroundColor: "#0f0f1a" }}
     >
-      <div className={`financial-actions flex flex-wrap items-center justify-center sm:justify-between gap-3 mb-6 no-pdf${isExportingPdf ? " exporting-pdf" : ""}`}>
+      <div className="financial-actions flex flex-wrap items-center justify-center sm:justify-between gap-3 mb-6">
         <div className="flex flex-wrap gap-3">
           <motion.a
             href={MARKET_VALIDATION_URL}
@@ -215,7 +213,8 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-start sm:items-center justify-center mb-8">
+      <div ref={exportContentRef}>
+        <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-start sm:items-center justify-center mb-8">
         <div className="flex flex-col items-center gap-2">
           <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
             سيناريو السعر
@@ -286,20 +285,21 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
             </span>
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-        <div className="lg:col-span-3 space-y-4">
-          <KPICards
-            kpis={kpis}
-            formatSAR={formatSAR}
-            occupancy={occupancy}
-            animateCountersFromZero={animateCountersFromZero}
-          />
         </div>
-        <div className="lg:col-span-2 space-y-4">
-          <FinancialDistribution kpis={kpis} formatSAR={formatSAR} occupancy={occupancy} />
-          <ScenarioContext scenario={scenario} occupancy={occupancy} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+          <div className="lg:col-span-3 space-y-4">
+            <KPICards
+              kpis={kpis}
+              formatSAR={formatSAR}
+              occupancy={occupancy}
+              animateCountersFromZero={animateCountersFromZero}
+            />
+          </div>
+          <div className="lg:col-span-2 space-y-4">
+            <FinancialDistribution kpis={kpis} formatSAR={formatSAR} occupancy={occupancy} />
+            <ScenarioContext scenario={scenario} occupancy={occupancy} />
+          </div>
         </div>
       </div>
     </section>

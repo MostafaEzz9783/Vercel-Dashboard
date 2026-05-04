@@ -76,7 +76,3 @@
   box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
   transition: transform 0.2s ease;
 }
-
-.exporting-pdf.no-pdf {
-  display: none !important;
-}
