@@ -1,6 +1,6 @@
 import { Globe, TrendingUp } from "lucide-react";
 
-const MARKET_DATA_URL = "https://docs.google.com/spreadsheets";
+const MARKET_DATA_URL = "https://docs.google.com/spreadsheets/d/1OUJp3S0mw1uQtvlKQaiCCPxOiRWmdJ-RxNs2zR1gEQ4/edit";
 
 export default function Navbar() {
   return (
