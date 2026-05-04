@@ -23,7 +23,7 @@ const cardVariants = {
   },
 };
 
-export default function KPICards({ kpis, formatSAR, occupancy }) {
+export default function KPICards({ kpis, formatSAR, occupancy, animateCountersFromZero }) {
   const valuesKey = `${kpis.revenue}-${kpis.netRevenue}-${kpis.annualPerUnit}-${kpis.monthlyPerUnit}`;
 
   return (
@@ -49,7 +49,12 @@ export default function KPICards({ kpis, formatSAR, occupancy }) {
           className="text-4xl sm:text-5xl font-black mb-2 tracking-tight"
           style={{ color: "#60a5fa", direction: "ltr", textAlign: "right" }}
         >
-          <AnimatedCounter value={kpis.revenue} format={formatSAR} prefix="SAR " />
+          <AnimatedCounter
+            value={kpis.revenue}
+            format={formatSAR}
+            prefix="SAR "
+            animateFromZero={animateCountersFromZero}
+          />
         </p>
         <p className="text-xs" style={{ color: "#8b8ba7" }}>
           • كو-ليفنج (إشغال {occupancy}%)
@@ -65,6 +70,7 @@ export default function KPICards({ kpis, formatSAR, occupancy }) {
           color="#34d399"
           bg="#1a2e26"
           unit="ريال سعودي / سنة"
+          animateCountersFromZero={animateCountersFromZero}
         />
         <SmallKPI
           icon={Home}
@@ -74,6 +80,7 @@ export default function KPICards({ kpis, formatSAR, occupancy }) {
           color="#a78bfa"
           bg="#231a3a"
           unit="ريال سعودي / سنة"
+          animateCountersFromZero={animateCountersFromZero}
         />
         <SmallKPI
           icon={Calendar}
@@ -83,13 +90,14 @@ export default function KPICards({ kpis, formatSAR, occupancy }) {
           color="#fbbf24"
           bg="#2a2a1a"
           unit="ريال سعودي / شهر"
+          animateCountersFromZero={animateCountersFromZero}
         />
       </div>
     </motion.div>
   );
 }
 
-function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit }) {
+function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit, animateCountersFromZero }) {
   return (
     <motion.div
       variants={cardVariants}
@@ -105,7 +113,7 @@ function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit }) {
         {label}
       </p>
       <p className="text-lg font-black" style={{ color }}>
-        <AnimatedCounter value={value} format={formatSAR} />
+        <AnimatedCounter value={value} format={formatSAR} animateFromZero={animateCountersFromZero} />
       </p>
       <p className="text-xs" style={{ color: "#4b4b6b" }}>
         {unit}

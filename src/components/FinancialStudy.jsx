@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FinancialDistribution from "@/components/FinancialDistribution";
 import KPICards from "@/components/KPICards";
 import ScenarioContext from "@/components/ScenarioContext";
 import { operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
+
+let hasAnimatedFinancialStudyOnce = false;
 
 function formatSAR(value) {
   return new Intl.NumberFormat("ar-SA", {
@@ -14,6 +16,34 @@ function formatSAR(value) {
 export default function FinancialStudy() {
   const [scenario, setScenario] = useState("realistic");
   const [occupancy, setOccupancy] = useState(90);
+  const [animateCountersFromZero, setAnimateCountersFromZero] = useState(!hasAnimatedFinancialStudyOnce);
+  const initialValuesRef = useRef({ scenario: "realistic", occupancy: 90 });
+
+  useEffect(() => {
+    if (!animateCountersFromZero) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      hasAnimatedFinancialStudyOnce = true;
+      setAnimateCountersFromZero(false);
+    }, 1050);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [animateCountersFromZero]);
+
+  useEffect(() => {
+    const initialValues = initialValuesRef.current;
+    const hasChangedFromInitial =
+      scenario !== initialValues.scenario || occupancy !== initialValues.occupancy;
+
+    if (hasChangedFromInitial && animateCountersFromZero) {
+      hasAnimatedFinancialStudyOnce = true;
+      setAnimateCountersFromZero(false);
+    }
+  }, [scenario, occupancy, animateCountersFromZero]);
 
   const scenarioData = scenarios[scenario];
   const revenue = (scenarioData.revenueAt100 * occupancy) / 100;
@@ -79,7 +109,7 @@ export default function FinancialStudy() {
                 accentColor: "#60a5fa",
               }}
             />
-            <div className="flex justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
+            <div className="flex flex-row-reverse justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
               <span>90%</span>
               <span>70%</span>
               <span>50%</span>
@@ -110,7 +140,12 @@ export default function FinancialStudy() {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
         <div className="lg:col-span-3 space-y-4">
-          <KPICards kpis={kpis} formatSAR={formatSAR} occupancy={occupancy} />
+          <KPICards
+            kpis={kpis}
+            formatSAR={formatSAR}
+            occupancy={occupancy}
+            animateCountersFromZero={animateCountersFromZero}
+          />
         </div>
         <div className="lg:col-span-2 space-y-4">
           <FinancialDistribution kpis={kpis} formatSAR={formatSAR} occupancy={occupancy} />
