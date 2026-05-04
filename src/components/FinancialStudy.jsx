@@ -108,6 +108,9 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
     setIsExportingPdf(true);
 
     try {
+      await new Promise((resolve) => window.requestAnimationFrame(resolve));
+      await new Promise((resolve) => window.requestAnimationFrame(resolve));
+
       const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
         import("html2canvas"),
         import("jspdf"),
@@ -168,7 +171,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
       className="rounded-t-3xl -mx-6 px-6 pt-8 pb-12 mt-2"
       style={{ backgroundColor: "#0f0f1a" }}
     >
-      <div className="flex flex-wrap items-center justify-center sm:justify-between gap-3 mb-6">
+      <div className={`financial-actions flex flex-wrap items-center justify-center sm:justify-between gap-3 mb-6 no-pdf${isExportingPdf ? " exporting-pdf" : ""}`}>
         <div className="flex flex-wrap gap-3">
           <motion.a
             href={MARKET_VALIDATION_URL}
