@@ -4,7 +4,8 @@ import { Expand, ExternalLink, FileDown, Minimize } from "lucide-react";
 import FinancialDistribution from "@/components/FinancialDistribution";
 import KPICards from "@/components/KPICards";
 import ScenarioContext from "@/components/ScenarioContext";
-import { monthlyRates, occupancyOptions, operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
+import { occupancyOptions, operatorFee } from "@/data/financialAssumptions";
+import { coLivingModel } from "@/data/coLivingModel";
 import { executiveModel } from "@/data/executiveModel";
 
 let hasAnimatedFinancialStudyOnce = false;
@@ -27,24 +28,6 @@ const SCENARIO_OPTIONS = [
   { key: "base", label: "واقعي", color: "#60a5fa" },
   { key: "best", label: "متفائل", color: "#34d399" },
 ];
-
-const CO_LIVING_SCENARIOS = {
-  worst: {
-    label: scenarios.conservative.label,
-    revenueAt100: scenarios.conservative.revenueAt100,
-    monthlyRate: monthlyRates.conservative,
-  },
-  base: {
-    label: scenarios.realistic.label,
-    revenueAt100: scenarios.realistic.revenueAt100,
-    monthlyRate: monthlyRates.realistic,
-  },
-  best: {
-    label: scenarios.optimistic.label,
-    revenueAt100: scenarios.optimistic.revenueAt100,
-    monthlyRate: monthlyRates.optimistic,
-  },
-};
 
 function formatNumber(value) {
   return new Intl.NumberFormat("en-US", {
@@ -186,37 +169,30 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
     }
   };
 
-  const selectedCoLivingScenario = CO_LIVING_SCENARIOS[scenario];
+  const selectedCoLivingScenario = coLivingModel[scenario];
   const selectedExecutiveScenario = executiveModel[scenario];
-
-  const coLivingRevenue = (selectedCoLivingScenario.revenueAt100 * occupancy) / 100;
-  const coLivingOperatorFeeAmount = coLivingRevenue * operatorFee;
-  const coLivingNetRevenue = coLivingRevenue - coLivingOperatorFeeAmount;
-  const coLivingAnnualPerUnit = coLivingNetRevenue / totalUnits;
-  const coLivingMonthlyPerUnit = coLivingAnnualPerUnit / 12;
-
+  const coLivingData = selectedCoLivingScenario.occupancy[occupancy];
   const executiveData = selectedExecutiveScenario.occupancy[occupancy];
-  const executiveOperatorFeeAmount = executiveData.revenue - executiveData.netRevenue;
 
   const kpis =
     model === "executive"
       ? {
           revenueAt100: selectedExecutiveScenario.revenueAt100,
           revenue: executiveData.revenue,
-          operatorFeeAmount: executiveOperatorFeeAmount,
-          operatorFeeRate: operatorFee,
           netRevenue: executiveData.netRevenue,
           annualPerUnit: executiveData.annualPerUnit,
           monthlyPerUnit: executiveData.monthlyPerUnit,
+          operatorFeeRate: operatorFee,
+          operatorFeeAmount: executiveData.revenue - executiveData.netRevenue,
         }
       : {
           revenueAt100: selectedCoLivingScenario.revenueAt100,
-          revenue: coLivingRevenue,
-          operatorFeeAmount: coLivingOperatorFeeAmount,
+          revenue: coLivingData.revenue,
+          netRevenue: coLivingData.netRevenue,
+          annualPerUnit: coLivingData.annualPerUnit,
+          monthlyPerUnit: coLivingData.monthlyPerUnit,
           operatorFeeRate: operatorFee,
-          netRevenue: coLivingNetRevenue,
-          annualPerUnit: coLivingAnnualPerUnit,
-          monthlyPerUnit: coLivingMonthlyPerUnit,
+          operatorFeeAmount: coLivingData.revenue - coLivingData.netRevenue,
         };
 
   const occupancyProgress = ((occupancy - 50) / 40) * 100;
@@ -387,6 +363,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
               scenario={scenario}
               scenarioLabel={selectedScenarioLabel}
               occupancy={formatPercent(occupancy)}
+              monthlyPrice={model === "executive" ? null : coLivingData.monthlyPerUnit}
             />
           </div>
         </div>

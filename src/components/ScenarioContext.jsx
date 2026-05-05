@@ -1,5 +1,5 @@
 import { executiveUnitPricing } from "@/data/executiveModel";
-import { monthlyRates, operatorFee, totalUnits } from "@/data/financialAssumptions";
+import { operatorFee, totalUnits } from "@/data/financialAssumptions";
 
 const CONTEXT = {
   worst: {
@@ -7,28 +7,19 @@ const CONTEXT = {
     color: "#f87171",
     projectDesc:
       "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
-    scenario: "محافظ",
   },
   base: {
     title: "سياق الدراسة",
     color: "#60a5fa",
     projectDesc:
       "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
-    scenario: "واقعي",
   },
   best: {
     title: "سياق الدراسة",
     color: "#34d399",
     projectDesc:
       "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
-    scenario: "متفائل",
   },
-};
-
-const CO_LIVING_MONTHLY_RATES = {
-  worst: monthlyRates.conservative,
-  base: monthlyRates.realistic,
-  best: monthlyRates.optimistic,
 };
 
 function formatNumber(value) {
@@ -38,11 +29,35 @@ function formatNumber(value) {
   }).format(Math.round(value));
 }
 
+function roundDownToNearest500(value) {
+  return Math.floor(value / 500) * 500;
+}
+
 const executiveTotalUnits = executiveUnitPricing.studio.units + executiveUnitPricing.twoBedroom.units;
 
-export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy }) {
+function PricingBlock({ color, title, monthlyPrice, annualLabel = "الإيجار السنوي" }) {
+  const annualRent = roundDownToNearest500(monthlyPrice * 12);
+
+  return (
+    <div>
+      <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
+        {title}
+      </p>
+      <p className="text-xs font-black" style={{ color }}>
+        SAR {formatNumber(monthlyPrice)} / شهر
+      </p>
+      <p className="text-xs mt-1" style={{ color: "#8b8ba7" }}>
+        {annualLabel}
+      </p>
+      <p className="text-xs font-black" style={{ color }}>
+        SAR {formatNumber(annualRent)} / سنة
+      </p>
+    </div>
+  );
+}
+
+export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy, monthlyPrice }) {
   const ctx = CONTEXT[scenario];
-  const monthlyRate = CO_LIVING_MONTHLY_RATES[scenario];
 
   return (
     <div className="rounded-2xl p-6 border" style={{ backgroundColor: "#1a1a2e", borderColor: "#2e2e3e" }}>
@@ -74,27 +89,21 @@ export default function ScenarioContext({ model, scenario, scenarioLabel, occupa
               <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
                 ◈
               </span>
-              <div>
-                <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
-                  {executiveUnitPricing.studio.label} ({executiveUnitPricing.studio.units} وحدات)
-                </p>
-                <p className="text-xs font-black" style={{ color: ctx.color }}>
-                  SAR {formatNumber(executiveUnitPricing.studio[scenario])} / شهر
-                </p>
-              </div>
+              <PricingBlock
+                color={ctx.color}
+                title={`${executiveUnitPricing.studio.label} (${executiveUnitPricing.studio.units} وحدات)`}
+                monthlyPrice={executiveUnitPricing.studio[scenario]}
+              />
             </div>
             <div className="flex items-start gap-2">
               <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
                 ◈
               </span>
-              <div>
-                <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
-                  {executiveUnitPricing.twoBedroom.label} ({executiveUnitPricing.twoBedroom.units} وحدات)
-                </p>
-                <p className="text-xs font-black" style={{ color: ctx.color }}>
-                  SAR {formatNumber(executiveUnitPricing.twoBedroom[scenario])} / شهر
-                </p>
-              </div>
+              <PricingBlock
+                color={ctx.color}
+                title={`${executiveUnitPricing.twoBedroom.label} (${executiveUnitPricing.twoBedroom.units} وحدات)`}
+                monthlyPrice={executiveUnitPricing.twoBedroom[scenario]}
+              />
             </div>
           </>
         ) : (
@@ -102,14 +111,12 @@ export default function ScenarioContext({ model, scenario, scenarioLabel, occupa
             <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
               ◈
             </span>
-            <div>
-              <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
-                السعر الشهري / وحدة
-              </p>
-              <p className="text-xs font-black" style={{ color: ctx.color }}>
-                SAR {formatNumber(monthlyRate)} / شهر
-              </p>
-            </div>
+            <PricingBlock
+              color={ctx.color}
+              title="السعر الشهري / وحدة"
+              monthlyPrice={monthlyPrice}
+              annualLabel="الإيجار السنوي / وحدة"
+            />
           </div>
         )}
       </div>
