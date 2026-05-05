@@ -23,7 +23,14 @@ const cardVariants = {
   },
 };
 
-export default function KPICards({ kpis, formatSAR, occupancy, animateCountersFromZero }) {
+export default function KPICards({
+  kpis,
+  formatSAR,
+  formatPercent,
+  occupancy,
+  animateCountersFromZero,
+  modelLabel,
+}) {
   const valuesKey = `${kpis.revenue}-${kpis.netRevenue}-${kpis.annualPerUnit}-${kpis.monthlyPerUnit}`;
 
   return (
@@ -39,26 +46,34 @@ export default function KPICards({ kpis, formatSAR, occupancy, animateCountersFr
         whileHover={{ scale: 1.02 }}
         animate={{ scale: [1, 1.015, 1] }}
         transition={{ duration: 0.28, ease: "easeOut" }}
-        className="rounded-2xl p-7 border"
-        style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", willChange: "transform, opacity" }}
+        className="rounded-2xl border"
+        style={{
+          backgroundColor: "#1e1e2e",
+          borderColor: "#2e2e3e",
+          willChange: "transform, opacity",
+          boxShadow: "0 0 20px rgba(0,0,0,0.25)",
+        }}
       >
-        <p className="text-xs font-semibold mb-2" style={{ color: "#8b8ba7" }}>
-          الإيراد السنوي المتوقع
-        </p>
-        <p
-          className="text-4xl sm:text-5xl font-black mb-2 tracking-tight"
-          style={{ color: "#60a5fa", direction: "ltr", textAlign: "right" }}
-        >
-          <AnimatedCounter
-            value={kpis.revenue}
-            format={formatSAR}
-            prefix="SAR "
-            animateFromZero={animateCountersFromZero}
-          />
-        </p>
-        <p className="text-xs" style={{ color: "#8b8ba7" }}>
-          • كو-ليفنج (إشغال {occupancy}%)
-        </p>
+        <div className="p-8">
+          <p className="text-xs font-semibold mb-3" style={{ color: "#8b8ba7" }}>
+            الإيراد السنوي المتوقع
+          </p>
+          <p
+            className="text-4xl sm:text-5xl font-black tracking-tight"
+            style={{ color: "#60a5fa", direction: "ltr", textAlign: "right" }}
+          >
+            <AnimatedCounter
+              value={kpis.revenue}
+              format={formatSAR}
+              prefix="SAR "
+              animateFromZero={animateCountersFromZero}
+            />
+          </p>
+        </div>
+        <div className="px-8 py-4 border-t space-y-3" style={{ borderColor: "#2e2e3e" }}>
+          <MetricRow label="النموذج" value={modelLabel} valueColor="#f0f0fa" />
+          <MetricRow label="الإشغال" value={`${formatPercent(occupancy)}%`} valueColor="#f0f0fa" />
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -103,21 +118,41 @@ function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit, animat
       variants={cardVariants}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="rounded-2xl p-5 border"
-      style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", willChange: "transform, opacity" }}
+      className="rounded-2xl border"
+      style={{
+        backgroundColor: "#1e1e2e",
+        borderColor: "#2e2e3e",
+        willChange: "transform, opacity",
+        boxShadow: "0 0 20px rgba(0,0,0,0.25)",
+      }}
     >
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: bg }}>
-        <Icon size={15} style={{ color }} />
+      <div className="p-6">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-4" style={{ backgroundColor: bg }}>
+          <Icon size={15} style={{ color }} />
+        </div>
+        <p className="text-xs mb-2 leading-snug" style={{ color: "#8b8ba7" }}>
+          {label}
+        </p>
+        <p className="text-xl font-black" style={{ color, direction: "ltr", textAlign: "right" }}>
+          <AnimatedCounter value={value} format={formatSAR} animateFromZero={animateCountersFromZero} />
+        </p>
       </div>
-      <p className="text-xs mb-1 leading-snug" style={{ color: "#8b8ba7" }}>
-        {label}
-      </p>
-      <p className="text-lg font-black" style={{ color }}>
-        <AnimatedCounter value={value} format={formatSAR} animateFromZero={animateCountersFromZero} />
-      </p>
-      <p className="text-xs" style={{ color: "#4b4b6b" }}>
-        {unit}
-      </p>
+      <div className="px-6 py-4 border-t" style={{ borderColor: "#2e2e3e" }}>
+        <MetricRow label="الوحدة" value={unit} valueColor="#4b4b6b" />
+      </div>
     </motion.div>
+  );
+}
+
+function MetricRow({ label, value, valueColor }) {
+  return (
+    <div className="grid grid-cols-[1fr_auto] items-center gap-3">
+      <span className="text-xs text-left" style={{ color: "#8b8ba7" }}>
+        {label}
+      </span>
+      <span className="text-xs font-semibold text-right" style={{ color: valueColor }}>
+        {value}
+      </span>
+    </div>
   );
 }

@@ -1,21 +1,22 @@
+import { executiveUnitPricing } from "@/data/executiveModel";
 import { monthlyRates, operatorFee, totalUnits } from "@/data/financialAssumptions";
 
 const CONTEXT = {
-  conservative: {
+  worst: {
     title: "سياق الدراسة",
     color: "#f87171",
     projectDesc:
       "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
     scenario: "محافظ",
   },
-  realistic: {
+  base: {
     title: "سياق الدراسة",
     color: "#60a5fa",
     projectDesc:
       "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
     scenario: "واقعي",
   },
-  optimistic: {
+  best: {
     title: "سياق الدراسة",
     color: "#34d399",
     projectDesc:
@@ -24,9 +25,24 @@ const CONTEXT = {
   },
 };
 
-export default function ScenarioContext({ scenario, occupancy }) {
+const CO_LIVING_MONTHLY_RATES = {
+  worst: monthlyRates.conservative,
+  base: monthlyRates.realistic,
+  best: monthlyRates.optimistic,
+};
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.round(value));
+}
+
+const executiveTotalUnits = executiveUnitPricing.studio.units + executiveUnitPricing.twoBedroom.units;
+
+export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy }) {
   const ctx = CONTEXT[scenario];
-  const monthlyRate = monthlyRates[scenario];
+  const monthlyRate = CO_LIVING_MONTHLY_RATES[scenario];
 
   return (
     <div className="rounded-2xl p-6 border" style={{ backgroundColor: "#1a1a2e", borderColor: "#2e2e3e" }}>
@@ -44,31 +60,63 @@ export default function ScenarioContext({ scenario, occupancy }) {
           </span>
           <div>
             <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
-              {totalUnits} وحدة سكنية ضمن السيناريو {ctx.scenario}
+              {model === "executive" ? executiveTotalUnits : totalUnits} وحدة سكنية ضمن السيناريو {scenarioLabel}
             </p>
             <p className="text-xs" style={{ color: "#8b8ba7" }}>
               يعتمد هذا العرض على نسبة إشغال سنوية تبلغ {occupancy}% للمشروع.
             </p>
           </div>
         </div>
-        <div className="flex items-start gap-2">
-          <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
-            ◈
-          </span>
-          <div>
-            <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
-              السعر الشهري / وحدة
-            </p>
-            <p className="text-xs font-black" style={{ color: ctx.color }}>
-              SAR {monthlyRate.toLocaleString("ar-SA")} / شهر
-            </p>
+
+        {model === "executive" ? (
+          <>
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+                ◈
+              </span>
+              <div>
+                <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
+                  {executiveUnitPricing.studio.label} ({executiveUnitPricing.studio.units} وحدات)
+                </p>
+                <p className="text-xs font-black" style={{ color: ctx.color }}>
+                  SAR {formatNumber(executiveUnitPricing.studio[scenario])} / شهر
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+                ◈
+              </span>
+              <div>
+                <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
+                  {executiveUnitPricing.twoBedroom.label} ({executiveUnitPricing.twoBedroom.units} وحدات)
+                </p>
+                <p className="text-xs font-black" style={{ color: ctx.color }}>
+                  SAR {formatNumber(executiveUnitPricing.twoBedroom[scenario])} / شهر
+                </p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex items-start gap-2">
+            <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+              ◈
+            </span>
+            <div>
+              <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
+                السعر الشهري / وحدة
+              </p>
+              <p className="text-xs font-black" style={{ color: ctx.color }}>
+                SAR {formatNumber(monthlyRate)} / شهر
+              </p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="mt-4 pt-3 border-t text-center" style={{ borderColor: "#2e2e3e" }}>
         <p className="text-xs" style={{ color: "#8b8ba7" }}>
-          رسوم المشغل ثابتة: <span style={{ color: "#f97316", fontWeight: "700" }}>{operatorFee * 100}%</span>
+          رسوم المشغل ثابتة: <span style={{ color: "#f97316", fontWeight: "700" }}>{formatNumber(operatorFee * 100)}%</span>
         </p>
       </div>
     </div>

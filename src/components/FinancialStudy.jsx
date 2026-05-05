@@ -4,7 +4,8 @@ import { Expand, ExternalLink, FileDown, Minimize } from "lucide-react";
 import FinancialDistribution from "@/components/FinancialDistribution";
 import KPICards from "@/components/KPICards";
 import ScenarioContext from "@/components/ScenarioContext";
-import { operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
+import { monthlyRates, occupancyOptions, operatorFee, scenarios, totalUnits } from "@/data/financialAssumptions";
+import { executiveModel } from "@/data/executiveModel";
 
 let hasAnimatedFinancialStudyOnce = false;
 
@@ -16,20 +17,58 @@ const actionButtonMotion = {
   transition: { duration: 0.2, ease: "easeOut" },
 };
 
-function formatSAR(value) {
-  return new Intl.NumberFormat("ar-SA", {
+const MODEL_OPTIONS = [
+  { key: "coLiving", label: "Co-living" },
+  { key: "executive", label: "Executive" },
+];
+
+const SCENARIO_OPTIONS = [
+  { key: "worst", label: "محافظ", color: "#f87171" },
+  { key: "base", label: "واقعي", color: "#60a5fa" },
+  { key: "best", label: "متفائل", color: "#34d399" },
+];
+
+const CO_LIVING_SCENARIOS = {
+  worst: {
+    label: scenarios.conservative.label,
+    revenueAt100: scenarios.conservative.revenueAt100,
+    monthlyRate: monthlyRates.conservative,
+  },
+  base: {
+    label: scenarios.realistic.label,
+    revenueAt100: scenarios.realistic.revenueAt100,
+    monthlyRate: monthlyRates.realistic,
+  },
+  best: {
+    label: scenarios.optimistic.label,
+    revenueAt100: scenarios.optimistic.revenueAt100,
+    monthlyRate: monthlyRates.optimistic,
+  },
+};
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(Math.round(value));
 }
 
+function formatSAR(value) {
+  return formatNumber(value);
+}
+
+function formatPercent(value) {
+  return formatNumber(value);
+}
+
 const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
-  const [scenario, setScenario] = useState("realistic");
+  const [model, setModel] = useState("coLiving");
+  const [scenario, setScenario] = useState("base");
   const [occupancy, setOccupancy] = useState(90);
   const [animateCountersFromZero, setAnimateCountersFromZero] = useState(!hasAnimatedFinancialStudyOnce);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const initialValuesRef = useRef({ scenario: "realistic", occupancy: 90 });
+  const initialValuesRef = useRef({ model: "coLiving", scenario: "base", occupancy: 90 });
   const sectionRef = useRef(null);
   const exportContentRef = useRef(null);
 
@@ -64,13 +103,15 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
   useEffect(() => {
     const initialValues = initialValuesRef.current;
     const hasChangedFromInitial =
-      scenario !== initialValues.scenario || occupancy !== initialValues.occupancy;
+      model !== initialValues.model ||
+      scenario !== initialValues.scenario ||
+      occupancy !== initialValues.occupancy;
 
     if (hasChangedFromInitial && animateCountersFromZero) {
       hasAnimatedFinancialStudyOnce = true;
       setAnimateCountersFromZero(false);
     }
-  }, [scenario, occupancy, animateCountersFromZero]);
+  }, [model, scenario, occupancy, animateCountersFromZero]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -145,23 +186,42 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
     }
   };
 
-  const scenarioData = scenarios[scenario];
-  const revenue = (scenarioData.revenueAt100 * occupancy) / 100;
-  const operatorFeeAmount = revenue * operatorFee;
-  const netRevenue = revenue - operatorFeeAmount;
-  const annualPerUnit = netRevenue / totalUnits;
-  const monthlyPerUnit = annualPerUnit / 12;
-  const occupancyProgress = ((occupancy - 50) / 40) * 100;
+  const selectedCoLivingScenario = CO_LIVING_SCENARIOS[scenario];
+  const selectedExecutiveScenario = executiveModel[scenario];
 
-  const kpis = {
-    revenueAt100: scenarioData.revenueAt100,
-    revenue,
-    operatorFeeAmount,
-    operatorFeeRate: operatorFee,
-    netRevenue,
-    annualPerUnit,
-    monthlyPerUnit,
-  };
+  const coLivingRevenue = (selectedCoLivingScenario.revenueAt100 * occupancy) / 100;
+  const coLivingOperatorFeeAmount = coLivingRevenue * operatorFee;
+  const coLivingNetRevenue = coLivingRevenue - coLivingOperatorFeeAmount;
+  const coLivingAnnualPerUnit = coLivingNetRevenue / totalUnits;
+  const coLivingMonthlyPerUnit = coLivingAnnualPerUnit / 12;
+
+  const executiveData = selectedExecutiveScenario.occupancy[occupancy];
+  const executiveOperatorFeeAmount = executiveData.revenue - executiveData.netRevenue;
+
+  const kpis =
+    model === "executive"
+      ? {
+          revenueAt100: selectedExecutiveScenario.revenueAt100,
+          revenue: executiveData.revenue,
+          operatorFeeAmount: executiveOperatorFeeAmount,
+          operatorFeeRate: operatorFee,
+          netRevenue: executiveData.netRevenue,
+          annualPerUnit: executiveData.annualPerUnit,
+          monthlyPerUnit: executiveData.monthlyPerUnit,
+        }
+      : {
+          revenueAt100: selectedCoLivingScenario.revenueAt100,
+          revenue: coLivingRevenue,
+          operatorFeeAmount: coLivingOperatorFeeAmount,
+          operatorFeeRate: operatorFee,
+          netRevenue: coLivingNetRevenue,
+          annualPerUnit: coLivingAnnualPerUnit,
+          monthlyPerUnit: coLivingMonthlyPerUnit,
+        };
+
+  const occupancyProgress = ((occupancy - 50) / 40) * 100;
+  const selectedScenarioLabel = SCENARIO_OPTIONS.find((item) => item.key === scenario)?.label ?? "";
+  const modelLabel = model === "executive" ? "Executive" : "Co-living";
 
   return (
     <section
@@ -215,76 +275,98 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
 
       <div ref={exportContentRef}>
         <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-start sm:items-center justify-center mb-8">
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-            سيناريو السعر
-          </p>
-          <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
-            {Object.entries(scenarios).map(([key, value]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setScenario(key)}
-                className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
+              نموذج التشغيل
+            </p>
+            <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
+              {MODEL_OPTIONS.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  onClick={() => setModel(option.key)}
+                  className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+                  style={{
+                    backgroundColor: model === option.key ? "#60a5fa" : "transparent",
+                    color: model === option.key ? "#0f0f1a" : "#8b8ba7",
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
+              سيناريو السعر
+            </p>
+            <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
+              {SCENARIO_OPTIONS.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  onClick={() => setScenario(option.key)}
+                  className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+                  style={{
+                    backgroundColor: scenario === option.key ? "#60a5fa" : "transparent",
+                    color: scenario === option.key ? "#0f0f1a" : "#8b8ba7",
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2 min-w-[240px]">
+            <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
+              نسبة الإشغال
+            </p>
+            <div className="w-full rounded-xl px-4 py-3 border" style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}>
+              <div className="text-center text-sm font-bold mb-3" style={{ color: "#60a5fa" }}>
+                {formatPercent(occupancy)}%
+              </div>
+              <input
+                type="range"
+                min="50"
+                max="90"
+                step="10"
+                value={occupancy}
+                onChange={(event) => setOccupancy(Number(event.target.value))}
+                className="occupancy-slider w-full h-2 rounded-full appearance-none cursor-pointer"
                 style={{
-                  backgroundColor: scenario === key ? "#60a5fa" : "transparent",
-                  color: scenario === key ? "#0f0f1a" : "#8b8ba7",
+                  background: `linear-gradient(to left, #60a5fa 0%, #60a5fa ${occupancyProgress}%, #2e2e3e ${occupancyProgress}%, #2e2e3e 100%)`,
+                  accentColor: "#60a5fa",
                 }}
-              >
-                {value.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-2 min-w-[240px]">
-          <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-            نسبة الإشغال
-          </p>
-          <div className="w-full rounded-xl px-4 py-3 border" style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}>
-            <div className="text-center text-sm font-bold mb-3" style={{ color: "#60a5fa" }}>
-              {occupancy}%
-            </div>
-            <input
-              type="range"
-              min="50"
-              max="90"
-              step="10"
-              value={occupancy}
-              onChange={(event) => setOccupancy(Number(event.target.value))}
-              className="occupancy-slider w-full h-2 rounded-full appearance-none cursor-pointer"
-              style={{
-                background: `linear-gradient(to left, #60a5fa 0%, #60a5fa ${occupancyProgress}%, #2e2e3e ${occupancyProgress}%, #2e2e3e 100%)`,
-                accentColor: "#60a5fa",
-              }}
-            />
-            <div className="flex flex-row-reverse justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
-              <span>90%</span>
-              <span>70%</span>
-              <span>50%</span>
+              />
+              <div className="flex flex-row-reverse justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
+                {[...occupancyOptions].reverse().map((option) => (
+                  <span key={option}>{formatPercent(option)}%</span>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-            رسوم المشغل
-          </p>
-          <div
-            className="flex items-center gap-2 rounded-xl px-4 py-2 border"
-            style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}
-          >
-            <span className="text-sm font-bold" style={{ color: "#f97316" }}>
-              {operatorFee * 100}%
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded border" style={{ color: "#8b8ba7", borderColor: "#2e2e3e" }}>
-              ثابتة
-            </span>
-            <span className="text-xs" style={{ color: "#8b8ba7" }}>
-              من الإيراد السنوي
-            </span>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
+              رسوم المشغل
+            </p>
+            <div
+              className="flex items-center gap-2 rounded-xl px-4 py-2 border"
+              style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}
+            >
+              <span className="text-sm font-bold" style={{ color: "#f97316" }}>
+                {formatPercent(operatorFee * 100)}%
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded border" style={{ color: "#8b8ba7", borderColor: "#2e2e3e" }}>
+                ثابتة
+              </span>
+              <span className="text-xs" style={{ color: "#8b8ba7" }}>
+                من الإيراد السنوي
+              </span>
+            </div>
           </div>
-        </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
@@ -292,13 +374,20 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
             <KPICards
               kpis={kpis}
               formatSAR={formatSAR}
+              formatPercent={formatPercent}
               occupancy={occupancy}
               animateCountersFromZero={animateCountersFromZero}
+              modelLabel={modelLabel}
             />
           </div>
           <div className="lg:col-span-2 space-y-4">
-            <FinancialDistribution kpis={kpis} formatSAR={formatSAR} occupancy={occupancy} />
-            <ScenarioContext scenario={scenario} occupancy={occupancy} />
+            <FinancialDistribution kpis={kpis} formatSAR={formatSAR} occupancy={formatPercent(occupancy)} />
+            <ScenarioContext
+              model={model}
+              scenario={scenario}
+              scenarioLabel={selectedScenarioLabel}
+              occupancy={formatPercent(occupancy)}
+            />
           </div>
         </div>
       </div>
