@@ -1,16 +1,13 @@
 import { Car, Home, MapPin, Shield, Star, Users, Wifi } from "lucide-react";
-import { totalUnits } from "@/data/financialAssumptions";
 
-const features = [
-  { icon: Home, text: "شقق مخدومة عالية الجودة بإدارة احترافية" },
-  { icon: Users, text: "نموذج Co-living مميز يستهدف المقيمين والمغتربين" },
-  { icon: Wifi, text: "خدمات مدمجة: إنترنت فائق السرعة، تنظيف، صيانة" },
-  { icon: Shield, text: "أمن وحراسة على مدار الساعة" },
-  { icon: Car, text: "مواقف سيارات خاصة للمقيمين" },
-  { icon: Star, text: "موقع استراتيجي في العليا، الرياض" },
-];
+const featureIcons = [Home, Users, Wifi, Shield, Car, Star];
 
-export default function PropertyOverview() {
+export default function PropertyOverview({ t }) {
+  const features = t.property.features.map((text, index) => ({
+    icon: featureIcons[index],
+    text,
+  }));
+
   return (
     <div className="py-8 space-y-6">
       <div
@@ -18,9 +15,24 @@ export default function PropertyOverview() {
         style={{ backgroundColor: "#0f0f1a", borderColor: "#1e1e2e" }}
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard label="إجمالي الوحدات" value={String(totalUnits)} unit="وحدة" color="#60a5fa" />
-          <StatCard label="نموذج المشروع" value="Co-living" unit="شقق مخدومة" color="#a78bfa" />
-          <StatCard label="الموقع" value="العليا" unit="الرياض، المملكة العربية السعودية" color="#34d399" />
+          <StatCard
+            label={t.property.totalUnitsLabel}
+            value={t.property.totalUnitsValue}
+            unit={t.property.totalUnitsUnit}
+            color="#60a5fa"
+          />
+          <StatCard
+            label={t.property.modelLabel}
+            value={t.property.modelValue}
+            unit={t.property.modelUnit}
+            color="#a78bfa"
+          />
+          <StatCard
+            label={t.property.locationLabel}
+            value={t.property.locationValue}
+            unit={t.property.locationUnit}
+            color="#34d399"
+          />
         </div>
       </div>
 
@@ -34,11 +46,10 @@ export default function PropertyOverview() {
           </div>
           <div>
             <h3 className="font-bold text-base mb-1" style={{ color: "#111827" }}>
-              الموقع
+              {t.property.locationTitle}
             </h3>
             <p style={{ color: "#6b7280" }} className="text-sm leading-relaxed">
-              حي العليا، شمال الرياض — أحد أكثر الأحياء حيوية وطلباً في المملكة العربية السعودية، قريب من
-              المراكز التجارية والمكاتب والمطاعم العالمية.
+              {t.property.locationDescription}
             </p>
           </div>
         </div>
@@ -46,7 +57,7 @@ export default function PropertyOverview() {
 
       <div className="rounded-2xl p-6 border" style={{ backgroundColor: "#f9fafb", borderColor: "#e5e7eb" }}>
         <h3 className="font-bold text-base mb-5" style={{ color: "#111827" }}>
-          المميزات الرئيسية
+          {t.property.featuresTitle}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {features.map((feature) => (

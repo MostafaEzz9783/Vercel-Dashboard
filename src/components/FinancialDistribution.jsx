@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 
-export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
+export default function FinancialDistribution({ kpis, formatSAR, occupancy, t }) {
   const ownerShare = (1 - kpis.operatorFeeRate) * 100;
   const operatorShare = kpis.operatorFeeRate * 100;
 
   const rows = [
-    { label: "الإيراد عند إشغال 100%", value: formatSAR(kpis.revenueAt100), color: "#8b8ba7" },
-    { label: `إجمالي الإيراد السنوي (${occupancy}%)`, value: formatSAR(kpis.revenue), color: "#60a5fa" },
-    { label: `رسوم المشغل (${operatorShare}%)`, value: formatSAR(kpis.operatorFeeAmount), color: "#f97316" },
-    { label: "صافي دخل المالك", value: formatSAR(kpis.netRevenue), color: "#34d399" },
+    { label: t.financial.revenueAt100, value: formatSAR(kpis.revenueAt100), color: "#8b8ba7" },
+    { label: `${t.financial.totalAnnualRevenue} (${occupancy}%)`, value: formatSAR(kpis.revenue), color: "#60a5fa" },
+    { label: `${t.financial.operatorFeeLabel} (${operatorShare}%)`, value: formatSAR(kpis.operatorFeeAmount), color: "#f97316" },
+    { label: t.financial.ownerNetIncome, value: formatSAR(kpis.netRevenue), color: "#34d399" },
   ];
 
   return (
@@ -19,7 +19,7 @@ export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
       style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", willChange: "transform" }}
     >
       <h3 className="font-bold text-sm mb-4" style={{ color: "#f0f0fa" }}>
-        التوزيع المالي
+        {t.financial.financialDistribution}
       </h3>
 
       <div className="space-y-3 mb-5">
@@ -55,13 +55,13 @@ export default function FinancialDistribution({ kpis, formatSAR, occupancy }) {
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#60a5fa" }} />
           <span className="text-xs" style={{ color: "#8b8ba7" }}>
-            المالك {ownerShare}%
+            {t.financial.ownerShare} {ownerShare}%
           </span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#f97316" }} />
           <span className="text-xs" style={{ color: "#8b8ba7" }}>
-            المشغل {operatorShare}%
+            {t.financial.operatorShare} {operatorShare}%
           </span>
         </div>
       </div>

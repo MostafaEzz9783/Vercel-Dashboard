@@ -5,11 +5,6 @@ import Navbar from "@/components/Navbar";
 import PropertyOverview from "@/components/PropertyOverview";
 import FinancialStudy from "@/components/FinancialStudy";
 
-const tabs = [
-  { key: "property", label: "ملخص العقار", icon: Home },
-  { key: "financial", label: "دراسة مالية", icon: BarChart2 },
-];
-
 const tabContentMotion = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -17,10 +12,15 @@ const tabContentMotion = {
   transition: { duration: 0.3, ease: "easeOut" },
 };
 
-export default function Dashboard() {
+export default function Dashboard({ language, t, onToggleLanguage }) {
   const [activeTab, setActiveTab] = useState("property");
   const financialSectionRef = useRef(null);
   const pendingFinancialScrollRef = useRef(false);
+
+  const tabs = [
+    { key: "property", label: t.hero.propertyTab, icon: Home },
+    { key: "financial", label: t.hero.financialTab, icon: BarChart2 },
+  ];
 
   const scrollToFinancialSection = () => {
     if (!financialSectionRef.current) {
@@ -62,26 +62,21 @@ export default function Dashboard() {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'Cairo', sans-serif" }} dir="rtl">
-      <Navbar />
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Cairo', sans-serif" }} dir={language === "ar" ? "rtl" : "ltr"}>
+      <Navbar language={language} t={t} onToggleLanguage={onToggleLanguage} />
 
       <div className="bg-white px-6 pt-10 pb-0 max-w-7xl mx-auto text-center">
         <p className="text-xs font-medium mb-3" style={{ color: "#9ca3af" }}>
-          دراسة جدوى العقار
+          {t.hero.eyebrow}
         </p>
         <h1
           className="font-black mb-4 leading-none"
           style={{ color: "#0f172a", fontSize: "clamp(2.5rem, 6vw, 4.5rem)", letterSpacing: "-1.5px" }}
         >
-          سنام العليا.
+          {t.hero.title}
         </h1>
         <p className="text-sm leading-relaxed mb-8 max-w-xl mx-auto" style={{ color: "#6b7280" }}>
-          دراسة جدوى لمبنى سكني من{" "}
-          <span style={{ color: "#0f172a", fontWeight: "700" }}>22 وحدة</span>{" "}
-          في حي العليا، الرياض — تحليل نموذجي{" "}
-          <span style={{ color: "#60a5fa", fontWeight: "600" }}>السكن التشغيلي</span>{" "}
-          والشقق المخدومة{" "}
-          <span style={{ color: "#60a5fa", fontWeight: "600" }}>Co-living</span>
+          {t.hero.description}
         </p>
 
         <div className="flex gap-1 border-b justify-center" style={{ borderColor: "#f3f4f6" }}>
@@ -117,8 +112,8 @@ export default function Dashboard() {
             transition={tabContentMotion.transition}
             style={{ willChange: "transform, opacity" }}
           >
-            {activeTab === "property" && <PropertyOverview />}
-            {activeTab === "financial" && <FinancialStudy ref={financialSectionRef} />}
+            {activeTab === "property" && <PropertyOverview t={t} language={language} />}
+            {activeTab === "financial" && <FinancialStudy ref={financialSectionRef} t={t} language={language} />}
           </motion.div>
         </AnimatePresence>
       </main>

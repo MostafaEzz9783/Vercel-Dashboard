@@ -30,6 +30,7 @@ export default function KPICards({
   occupancy,
   animateCountersFromZero,
   modelLabel,
+  t,
 }) {
   const valuesKey = `${kpis.revenue}-${kpis.netRevenue}-${kpis.annualPerUnit}-${kpis.monthlyPerUnit}`;
 
@@ -56,7 +57,7 @@ export default function KPICards({
       >
         <div className="p-8">
           <p className="text-xs font-semibold mb-3" style={{ color: "#8b8ba7" }}>
-            الإيراد السنوي المتوقع
+            {t.financial.projectedAnnualRevenue}
           </p>
           <p
             className="text-4xl sm:text-5xl font-black tracking-tight"
@@ -71,48 +72,51 @@ export default function KPICards({
           </p>
         </div>
         <div className="px-8 py-4 border-t space-y-3" style={{ borderColor: "#2e2e3e" }}>
-          <MetricRow label="النموذج" value={modelLabel} valueColor="#f0f0fa" />
-          <MetricRow label="الإشغال" value={`${formatPercent(occupancy)}%`} valueColor="#f0f0fa" />
+          <MetricRow label={t.financial.model} value={modelLabel} valueColor="#f0f0fa" />
+          <MetricRow label={t.financial.occupancyLabel} value={`${formatPercent(occupancy)}%`} valueColor="#f0f0fa" />
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <SmallKPI
           icon={DollarSign}
-          label="صافي دخل المالك"
+          label={t.financial.ownerNetIncome}
           value={kpis.netRevenue}
           formatSAR={formatSAR}
           color="#34d399"
           bg="#1a2e26"
-          unit="ريال سعودي / سنة"
+          unit={t.financial.saudiRiyalPerYear}
           animateCountersFromZero={animateCountersFromZero}
+          t={t}
         />
         <SmallKPI
           icon={Home}
-          label="الإيراد السنوي / وحدة"
+          label={t.financial.annualRevenuePerUnit}
           value={kpis.annualPerUnit}
           formatSAR={formatSAR}
           color="#a78bfa"
           bg="#231a3a"
-          unit="ريال سعودي / سنة"
+          unit={t.financial.saudiRiyalPerYear}
           animateCountersFromZero={animateCountersFromZero}
+          t={t}
         />
         <SmallKPI
           icon={Calendar}
-          label="الإيراد الشهري / وحدة"
+          label={t.financial.monthlyRevenuePerUnit}
           value={kpis.monthlyPerUnit}
           formatSAR={formatSAR}
           color="#fbbf24"
           bg="#2a2a1a"
-          unit="ريال سعودي / شهر"
+          unit={t.financial.saudiRiyalPerMonth}
           animateCountersFromZero={animateCountersFromZero}
+          t={t}
         />
       </div>
     </motion.div>
   );
 }
 
-function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit, animateCountersFromZero }) {
+function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit, animateCountersFromZero, t }) {
   return (
     <motion.div
       variants={cardVariants}
@@ -138,7 +142,7 @@ function SmallKPI({ icon: Icon, label, value, formatSAR, color, bg, unit, animat
         </p>
       </div>
       <div className="px-6 py-4 border-t" style={{ borderColor: "#2e2e3e" }}>
-        <MetricRow label="الوحدة" value={unit} valueColor="#4b4b6b" />
+        <MetricRow label={t.financial.unitLabel} value={unit} valueColor="#4b4b6b" />
       </div>
     </motion.div>
   );

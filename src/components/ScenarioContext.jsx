@@ -2,25 +2,10 @@ import { coLivingUnitPricing } from "@/data/coLivingModel";
 import { executiveUnitPricing } from "@/data/executiveModel";
 import { operatorFee, totalUnits } from "@/data/financialAssumptions";
 
-const CONTEXT = {
-  worst: {
-    title: "سياق الدراسة",
-    color: "#f87171",
-    projectDesc:
-      "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
-  },
-  base: {
-    title: "سياق الدراسة",
-    color: "#60a5fa",
-    projectDesc:
-      "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
-  },
-  best: {
-    title: "سياق الدراسة",
-    color: "#34d399",
-    projectDesc:
-      "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
-  },
+const CONTEXT_COLORS = {
+  worst: "#f87171",
+  base: "#60a5fa",
+  best: "#34d399",
 };
 
 function formatNumber(value) {
@@ -36,7 +21,7 @@ function roundDownToNearest500(value) {
 
 const executiveTotalUnits = executiveUnitPricing.studio.units + executiveUnitPricing.twoBedroom.units;
 
-function PricingBlock({ color, title, monthlyPrice, annualLabel = "الإيجار السنوي" }) {
+function PricingBlock({ color, title, monthlyPrice, annualLabel, t }) {
   const annualRent = roundDownToNearest500(monthlyPrice * 12);
 
   return (
@@ -45,41 +30,41 @@ function PricingBlock({ color, title, monthlyPrice, annualLabel = "الإيجا�
         {title}
       </p>
       <p className="text-xs font-black" style={{ color }}>
-        SAR {formatNumber(monthlyPrice)} / شهر
+        SAR {formatNumber(monthlyPrice)} {t.financial.monthSuffix}
       </p>
       <p className="text-xs mt-1" style={{ color: "#8b8ba7" }}>
         {annualLabel}
       </p>
       <p className="text-xs font-black" style={{ color }}>
-        SAR {formatNumber(annualRent)} / سنة
+        SAR {formatNumber(annualRent)} {t.financial.yearSuffix}
       </p>
     </div>
   );
 }
 
-export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy }) {
-  const ctx = CONTEXT[scenario];
+export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy, t }) {
+  const color = CONTEXT_COLORS[scenario];
 
   return (
     <div className="rounded-2xl p-6 border" style={{ backgroundColor: "#1a1a2e", borderColor: "#2e2e3e" }}>
-      <h3 className="font-bold text-sm mb-3" style={{ color: ctx.color }}>
-        {ctx.title}
+      <h3 className="font-bold text-sm mb-3" style={{ color }}>
+        {t.financial.studyContext}
       </h3>
       <p className="text-xs leading-relaxed mb-4" style={{ color: "#c0c0d8" }}>
-        {ctx.projectDesc}
+        {t.financial.contextDescription}
       </p>
 
       <div className="space-y-3">
         <div className="flex items-start gap-2">
-          <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+          <span className="text-xs font-bold mt-0.5" style={{ color }}>
             ◈
           </span>
           <div>
             <p className="text-xs font-bold" style={{ color: "#f0f0fa" }}>
-              {model === "executive" ? executiveTotalUnits : totalUnits} وحدة سكنية ضمن السيناريو {scenarioLabel}
+              {model === "executive" ? executiveTotalUnits : totalUnits} {t.financial.unitsWithinScenario} {scenarioLabel}
             </p>
             <p className="text-xs" style={{ color: "#8b8ba7" }}>
-              يعتمد هذا العرض على نسبة إشغال سنوية تبلغ {occupancy}% للمشروع.
+              {t.financial.annualOccupancyText} {occupancy}%.
             </p>
           </div>
         </div>
@@ -87,46 +72,54 @@ export default function ScenarioContext({ model, scenario, scenarioLabel, occupa
         {model === "executive" ? (
           <>
             <div className="flex items-start gap-2">
-              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+              <span className="text-xs font-bold mt-0.5" style={{ color }}>
                 ◈
               </span>
               <PricingBlock
-                color={ctx.color}
-                title={`${executiveUnitPricing.studio.label} (${executiveUnitPricing.studio.units} وحدات)`}
+                color={color}
+                title={`${executiveUnitPricing.studio.label} (${executiveUnitPricing.studio.units} ${t.financial.unitsWord})`}
                 monthlyPrice={executiveUnitPricing.studio[scenario]}
+                annualLabel={t.financial.annualRent}
+                t={t}
               />
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+              <span className="text-xs font-bold mt-0.5" style={{ color }}>
                 ◈
               </span>
               <PricingBlock
-                color={ctx.color}
-                title={`${executiveUnitPricing.twoBedroom.label} (${executiveUnitPricing.twoBedroom.units} وحدات)`}
+                color={color}
+                title={`${executiveUnitPricing.twoBedroom.label} (${executiveUnitPricing.twoBedroom.units} ${t.financial.unitsWord})`}
                 monthlyPrice={executiveUnitPricing.twoBedroom[scenario]}
+                annualLabel={t.financial.annualRent}
+                t={t}
               />
             </div>
           </>
         ) : (
           <>
             <div className="flex items-start gap-2">
-              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+              <span className="text-xs font-bold mt-0.5" style={{ color }}>
                 ◈
               </span>
               <PricingBlock
-                color={ctx.color}
-                title={`${coLivingUnitPricing.studio.label} (${coLivingUnitPricing.studio.units} وحدات)`}
+                color={color}
+                title={`${coLivingUnitPricing.studio.label} (${coLivingUnitPricing.studio.units} ${t.financial.unitsWord})`}
                 monthlyPrice={coLivingUnitPricing.studio[scenario]}
+                annualLabel={t.financial.annualRent}
+                t={t}
               />
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+              <span className="text-xs font-bold mt-0.5" style={{ color }}>
                 ◈
               </span>
               <PricingBlock
-                color={ctx.color}
-                title={`${coLivingUnitPricing.smallBedroom.label} (${coLivingUnitPricing.smallBedroom.units} وحدات)`}
+                color={color}
+                title={`${coLivingUnitPricing.smallBedroom.label} (${coLivingUnitPricing.smallBedroom.units} ${t.financial.unitsWord})`}
                 monthlyPrice={coLivingUnitPricing.smallBedroom[scenario]}
+                annualLabel={t.financial.annualRent}
+                t={t}
               />
             </div>
           </>
@@ -135,7 +128,7 @@ export default function ScenarioContext({ model, scenario, scenarioLabel, occupa
 
       <div className="mt-4 pt-3 border-t text-center" style={{ borderColor: "#2e2e3e" }}>
         <p className="text-xs" style={{ color: "#8b8ba7" }}>
-          رسوم المشغل ثابتة: <span style={{ color: "#f97316", fontWeight: "700" }}>{formatNumber(operatorFee * 100)}%</span>
+          {t.financial.operatorFeeFixed}: <span style={{ color: "#f97316", fontWeight: "700" }}>{formatNumber(operatorFee * 100)}%</span>
         </p>
       </div>
     </div>

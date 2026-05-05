@@ -19,14 +19,14 @@ const actionButtonMotion = {
 };
 
 const MODEL_OPTIONS = [
-  { key: "coLiving", label: "Co-living" },
-  { key: "executive", label: "Executive" },
+  { key: "coLiving" },
+  { key: "executive" },
 ];
 
 const SCENARIO_OPTIONS = [
-  { key: "worst", label: "محافظ", color: "#f87171" },
-  { key: "base", label: "واقعي", color: "#60a5fa" },
-  { key: "best", label: "متفائل", color: "#34d399" },
+  { key: "worst", color: "#f87171" },
+  { key: "base", color: "#60a5fa" },
+  { key: "best", color: "#34d399" },
 ];
 
 function formatNumber(value) {
@@ -44,7 +44,7 @@ function formatPercent(value) {
   return formatNumber(value);
 }
 
-const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
+const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
   const [model, setModel] = useState("coLiving");
   const [scenario, setScenario] = useState("base");
   const [occupancy, setOccupancy] = useState(90);
@@ -196,8 +196,8 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
         };
 
   const occupancyProgress = ((occupancy - 50) / 40) * 100;
-  const selectedScenarioLabel = SCENARIO_OPTIONS.find((item) => item.key === scenario)?.label ?? "";
-  const modelLabel = model === "executive" ? "Executive" : "Co-living";
+  const selectedScenarioLabel = t.financial.scenarios[scenario];
+  const modelLabel = model === "executive" ? t.financial.executive : t.financial.coLiving;
 
   return (
     <section
@@ -216,7 +216,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
             whileHover={actionButtonMotion.whileHover}
             transition={actionButtonMotion.transition}
           >
-            <span>Market Validation</span>
+            <span>{t.financial.marketValidation}</span>
             <motion.span whileHover={{ x: -2 }} transition={{ duration: 0.2, ease: "easeOut" }}>
               <ExternalLink size={15} />
             </motion.span>
@@ -232,7 +232,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
             transition={actionButtonMotion.transition}
           >
             <FileDown size={15} />
-            <span>{isExportingPdf ? "جاري التصدير..." : "تصدير PDF"}</span>
+            <span>{isExportingPdf ? t.financial.exportingPdf : t.financial.exportPdf}</span>
           </motion.button>
 
           <motion.button
@@ -244,7 +244,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
             transition={actionButtonMotion.transition}
           >
             {isFullscreen ? <Minimize size={15} /> : <Expand size={15} />}
-            <span>{isFullscreen ? "إنهاء العرض" : "تكبير العرض"}</span>
+            <span>{isFullscreen ? t.financial.exitFullscreen : t.financial.fullscreen}</span>
           </motion.button>
         </div>
       </div>
@@ -253,7 +253,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
         <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-start sm:items-center justify-center mb-8">
           <div className="flex flex-col items-center gap-2">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-              نموذج التشغيل
+              {t.financial.operatingModel}
             </p>
             <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
               {MODEL_OPTIONS.map((option) => (
@@ -267,7 +267,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
                     color: model === option.key ? "#0f0f1a" : "#8b8ba7",
                   }}
                 >
-                  {option.label}
+                  {option.key === "executive" ? t.financial.executive : t.financial.coLiving}
                 </button>
               ))}
             </div>
@@ -275,7 +275,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
 
           <div className="flex flex-col items-center gap-2">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-              سيناريو السعر
+              {t.financial.scenarioPrice}
             </p>
             <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
               {SCENARIO_OPTIONS.map((option) => (
@@ -289,7 +289,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
                     color: scenario === option.key ? "#0f0f1a" : "#8b8ba7",
                   }}
                 >
-                  {option.label}
+                  {t.financial.scenarios[option.key]}
                 </button>
               ))}
             </div>
@@ -297,7 +297,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
 
           <div className="flex flex-col items-center gap-2 min-w-[240px]">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-              نسبة الإشغال
+              {t.financial.occupancy}
             </p>
             <div className="w-full rounded-xl px-4 py-3 border" style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}>
               <div className="text-center text-sm font-bold mb-3" style={{ color: "#60a5fa" }}>
@@ -326,7 +326,7 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
 
           <div className="flex flex-col items-center gap-2">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
-              رسوم المشغل
+              {t.financial.operatorFee}
             </p>
             <div
               className="flex items-center gap-2 rounded-xl px-4 py-2 border"
@@ -336,10 +336,10 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
                 {formatPercent(operatorFee * 100)}%
               </span>
               <span className="text-xs px-2 py-0.5 rounded border" style={{ color: "#8b8ba7", borderColor: "#2e2e3e" }}>
-                ثابتة
+                {t.financial.fixed}
               </span>
               <span className="text-xs" style={{ color: "#8b8ba7" }}>
-                من الإيراد السنوي
+                {t.financial.fromAnnualRevenue}
               </span>
             </div>
           </div>
@@ -354,15 +354,22 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
               occupancy={occupancy}
               animateCountersFromZero={animateCountersFromZero}
               modelLabel={modelLabel}
+              t={t}
             />
           </div>
           <div className="lg:col-span-2 space-y-4">
-            <FinancialDistribution kpis={kpis} formatSAR={formatSAR} occupancy={formatPercent(occupancy)} />
+            <FinancialDistribution
+              kpis={kpis}
+              formatSAR={formatSAR}
+              occupancy={formatPercent(occupancy)}
+              t={t}
+            />
             <ScenarioContext
               model={model}
               scenario={scenario}
               scenarioLabel={selectedScenarioLabel}
               occupancy={formatPercent(occupancy)}
+              t={t}
             />
           </div>
         </div>
