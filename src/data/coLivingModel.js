@@ -30,3 +30,20 @@ export const coLivingModel = {
     },
   },
 };
+
+export const coLivingUnitPricing = {
+  studio: {
+    label: "Studio",
+    units: 6,
+    worst: 4021,
+    base: 4321,
+    best: 4621,
+  },
+  smallBedroom: {
+    label: "Small Bedroom",
+    units: 16,
+    worst: 2915,
+    base: 3215,
+    best: 3515,
+  },
+};

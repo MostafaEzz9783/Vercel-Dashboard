@@ -1,3 +1,4 @@
+import { coLivingUnitPricing } from "@/data/coLivingModel";
 import { executiveUnitPricing } from "@/data/executiveModel";
 import { operatorFee, totalUnits } from "@/data/financialAssumptions";
 
@@ -56,7 +57,7 @@ function PricingBlock({ color, title, monthlyPrice, annualLabel = "الإيجا�
   );
 }
 
-export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy, monthlyPrice }) {
+export default function ScenarioContext({ model, scenario, scenarioLabel, occupancy }) {
   const ctx = CONTEXT[scenario];
 
   return (
@@ -107,17 +108,28 @@ export default function ScenarioContext({ model, scenario, scenarioLabel, occupa
             </div>
           </>
         ) : (
-          <div className="flex items-start gap-2">
-            <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
-              ◈
-            </span>
-            <PricingBlock
-              color={ctx.color}
-              title="السعر الشهري / وحدة"
-              monthlyPrice={monthlyPrice}
-              annualLabel="الإيجار السنوي / وحدة"
-            />
-          </div>
+          <>
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+                ◈
+              </span>
+              <PricingBlock
+                color={ctx.color}
+                title={`${coLivingUnitPricing.studio.label} (${coLivingUnitPricing.studio.units} وحدات)`}
+                monthlyPrice={coLivingUnitPricing.studio[scenario]}
+              />
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xs font-bold mt-0.5" style={{ color: ctx.color }}>
+                ◈
+              </span>
+              <PricingBlock
+                color={ctx.color}
+                title={`${coLivingUnitPricing.smallBedroom.label} (${coLivingUnitPricing.smallBedroom.units} وحدات)`}
+                monthlyPrice={coLivingUnitPricing.smallBedroom[scenario]}
+              />
+            </div>
+          </>
         )}
       </div>
 

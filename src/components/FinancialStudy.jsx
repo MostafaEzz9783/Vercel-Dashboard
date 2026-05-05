@@ -363,7 +363,6 @@ const FinancialStudy = forwardRef(function FinancialStudy(_, forwardedRef) {
               scenario={scenario}
               scenarioLabel={selectedScenarioLabel}
               occupancy={formatPercent(occupancy)}
-              monthlyPrice={model === "executive" ? null : coLivingData.monthlyPerUnit}
             />
           </div>
         </div>
