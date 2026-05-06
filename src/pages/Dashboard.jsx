@@ -65,7 +65,7 @@ export default function Dashboard({ language, t, onToggleLanguage }) {
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Cairo', sans-serif" }} dir={language === "ar" ? "rtl" : "ltr"}>
       <Navbar language={language} t={t} onToggleLanguage={onToggleLanguage} />
 
-      <div className="bg-white px-6 pt-10 pb-0 max-w-7xl mx-auto text-center">
+      <div className="bg-white px-4 sm:px-6 pt-8 sm:pt-10 pb-0 max-w-7xl mx-auto text-center">
         <p className="text-xs font-medium mb-3" style={{ color: "#9ca3af" }}>
           {t.hero.eyebrow}
         </p>
@@ -79,13 +79,13 @@ export default function Dashboard({ language, t, onToggleLanguage }) {
           {t.hero.description}
         </p>
 
-        <div className="flex gap-1 border-b justify-center" style={{ borderColor: "#f3f4f6" }}>
+        <div className="flex gap-1 border-b justify-center overflow-x-auto" style={{ borderColor: "#f3f4f6" }}>
           {tabs.map((tab) => (
             <motion.button
               key={tab.key}
               type="button"
               onClick={() => handleTabChange(tab.key)}
-              className="flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all duration-200 border-b-2 -mb-px"
+              className="flex flex-1 sm:flex-none min-w-fit items-center justify-center gap-2 px-3 sm:px-5 py-3 text-xs sm:text-sm font-semibold transition-all duration-200 border-b-2 -mb-px whitespace-nowrap"
               whileHover={{ opacity: 0.88 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
               style={{
@@ -102,7 +102,7 @@ export default function Dashboard({ language, t, onToggleLanguage }) {
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

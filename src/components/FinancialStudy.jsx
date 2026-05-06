@@ -205,16 +205,16 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
   return (
     <section
       ref={setCombinedRef}
-      className="rounded-t-3xl -mx-6 px-6 pt-8 pb-12 mt-2"
+      className="rounded-t-3xl -mx-4 sm:-mx-6 px-4 sm:px-6 pt-6 sm:pt-8 pb-12 mt-2"
       style={{ backgroundColor: "#0f0f1a" }}
     >
-      <div className="financial-actions flex flex-wrap items-center justify-center sm:justify-between gap-3 mb-6">
-        <div className="flex flex-wrap gap-3">
+      <div className="financial-actions flex flex-wrap items-stretch sm:items-center justify-center sm:justify-between gap-3 mb-6">
+        <div className="flex w-full sm:w-auto flex-wrap gap-3">
           <motion.a
             href={MARKET_VALIDATION_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border"
+            className="inline-flex flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border"
             style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", color: "#f0f0fa" }}
             whileHover={actionButtonMotion.whileHover}
             transition={actionButtonMotion.transition}
@@ -229,7 +229,7 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
             type="button"
             onClick={exportToPdf}
             disabled={isExportingPdf}
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border disabled:opacity-70"
+            className="inline-flex flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border disabled:opacity-70"
             style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", color: "#f0f0fa" }}
             whileHover={actionButtonMotion.whileHover}
             transition={actionButtonMotion.transition}
@@ -241,7 +241,7 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
           <motion.button
             type="button"
             onClick={toggleFullscreen}
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border"
+            className="inline-flex flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold border"
             style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e", color: "#f0f0fa" }}
             whileHover={actionButtonMotion.whileHover}
             transition={actionButtonMotion.transition}
@@ -253,18 +253,18 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
       </div>
 
       <div ref={exportContentRef}>
-        <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-start sm:items-center justify-center mb-8">
-          <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-6 items-stretch sm:items-center justify-center mb-8">
+          <div className="flex w-full sm:w-auto flex-col items-center gap-2">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
               {t.financial.operatingModel}
             </p>
-            <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
+            <div className="flex w-full flex-wrap justify-center gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
               {MODEL_OPTIONS.map((option) => (
                 <button
                   key={option.key}
                   type="button"
                   onClick={() => setModel(option.key)}
-                  className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+                  className="flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
                   style={{
                     backgroundColor: model === option.key ? "#60a5fa" : "transparent",
                     color: model === option.key ? "#0f0f1a" : "#8b8ba7",
@@ -282,11 +282,11 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
             </p>
             <div className="flex flex-wrap items-start justify-center gap-2 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
               {SCENARIO_OPTIONS.map((option) => (
-                <div key={option.key} className="flex flex-col items-center gap-1">
+                <div key={option.key} className="flex flex-1 sm:flex-none min-w-[88px] flex-col items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setScenario(option.key)}
-                    className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+                    className="w-full px-4 sm:px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
                     style={{
                       backgroundColor:
                         scenario === option.key
@@ -332,7 +332,7 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2 min-w-[240px]">
+          <div className="flex w-full sm:w-auto flex-col items-center gap-2 sm:min-w-[240px]">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
               {t.financial.occupancy}
             </p>
@@ -356,15 +356,15 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
                   accentColor: "#60a5fa",
                 }}
               />
-              <div className="flex flex-row-reverse justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
+              <div className="flex flex-row-reverse justify-between mt-2 text-[11px] sm:text-xs gap-1" style={{ color: "#8b8ba7" }}>
                 {[...occupancyOptions].reverse().map((option) => {
                   const isRecommended = option === RECOMMENDED_OCCUPANCY;
                   const isSelected = occupancy === option;
 
                   return (
-                    <div key={option} className="flex min-w-[44px] flex-col items-center gap-1">
+                    <div key={option} className="flex min-w-[40px] sm:min-w-[44px] flex-col items-center gap-1">
                       <span
-                        className="rounded-full px-2 py-0.5 transition-all duration-200"
+                        className="rounded-full px-1.5 sm:px-2 py-0.5 transition-all duration-200"
                         style={{
                           color: isRecommended ? (isSelected ? "#eafff4" : "#b7efcf") : "#8b8ba7",
                           backgroundColor: isRecommended
@@ -383,7 +383,7 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
                       </span>
                       {isRecommended ? (
                         <span
-                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold transition-all duration-200"
+                          className="rounded-full px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold transition-all duration-200 text-center leading-tight"
                           style={{
                             color: isSelected ? "#eafff4" : "#b7efcf",
                             backgroundColor: isSelected ? "rgba(52, 211, 153, 0.16)" : "rgba(52, 211, 153, 0.08)",
@@ -402,12 +402,12 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex w-full sm:w-auto flex-col items-center gap-2">
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
               {t.financial.operatorFee}
             </p>
             <div
-              className="flex items-center gap-2 rounded-xl px-4 py-2 border"
+              className="flex flex-wrap items-center justify-center gap-2 rounded-xl px-4 py-2 border text-center"
               style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}
             >
               <span className="text-sm font-bold" style={{ color: "#f97316" }}>
