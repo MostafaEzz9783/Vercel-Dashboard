@@ -9,7 +9,7 @@ export const translations = {
       eyebrow: "دراسة جدوى العقار",
       title: "سنام العليا",
       description:
-        "دراسة جدوى لمبنى سكني من 22 وحدة في حي العليا، الرياض — تحليل نموذجي السكن التشغيلي والشقق المخدومة Co-living.",
+        "دراسة جدوى لمبنى سكني من 22 وحدة في حي العليا، الرياض، تغطي نموذجي التشغيل Co-living وExecutive.",
       propertyTab: "ملخص العقار",
       financialTab: "دراسة مالية",
     },
@@ -25,7 +25,7 @@ export const translations = {
       locationUnit: "الرياض، المملكة العربية السعودية",
       locationTitle: "الموقع",
       locationDescription:
-        "حي العليا، شمال الرياض — أحد أكثر الأحياء حيوية وطلباً في المملكة العربية السعودية، قريب من المراكز التجارية والمكاتب والمطاعم العالمية.",
+        "حي العليا، شمال الرياض، أحد أكثر الأحياء حيوية وطلباً في المملكة العربية السعودية، قريب من المراكز التجارية والمكاتب والمطاعم العالمية.",
       featuresTitle: "المميزات الرئيسية",
       features: [
         "شقق مخدومة عالية الجودة بإدارة احترافية",
@@ -55,6 +55,8 @@ export const translations = {
         base: "واقعي",
         best: "متفائل",
       },
+      recommendedScenario: "السيناريو المقترح",
+      recommendedOccupancy: "النسبة المقترحة",
       projectedAnnualRevenue: "الإيراد السنوي المتوقع",
       model: "النموذج",
       occupancyLabel: "الإشغال",
@@ -72,7 +74,7 @@ export const translations = {
       operatorShare: "المشغل",
       studyContext: "سياق الدراسة",
       contextDescription:
-        "نموذج السكن المشترك في حي العليا، الرياض. يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
+        "نموذج السكن المشترك في حي العليا، الرياض، يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
       annualOccupancyText: "يعتمد هذا العرض على نسبة إشغال سنوية تبلغ",
       unitsWithinScenario: "وحدة سكنية ضمن السيناريو",
       monthlyPricePerUnit: "السعر الشهري / وحدة",
@@ -113,7 +115,7 @@ export const translations = {
       locationUnit: "Riyadh, Saudi Arabia",
       locationTitle: "Location",
       locationDescription:
-        "Olaya district, north Riyadh — one of the most active and in-demand areas in Saudi Arabia, close to business centers, offices, and global restaurants.",
+        "Olaya district, north Riyadh, is one of the most active and in-demand areas in Saudi Arabia, close to business centers, offices, and global restaurants.",
       featuresTitle: "Key Features",
       features: [
         "Premium serviced apartments with professional management",
@@ -143,6 +145,8 @@ export const translations = {
         base: "Base Case",
         best: "Best Case",
       },
+      recommendedScenario: "Recommended Scenario",
+      recommendedOccupancy: "Recommended",
       projectedAnnualRevenue: "Projected Annual Revenue",
       model: "Model",
       occupancyLabel: "Occupancy",

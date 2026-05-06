@@ -29,6 +29,9 @@ const SCENARIO_OPTIONS = [
   { key: "best", color: "#34d399" },
 ];
 
+const RECOMMENDED_SCENARIO_KEY = "base";
+const RECOMMENDED_OCCUPANCY = 80;
+
 function formatNumber(value) {
   return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 0,
@@ -277,20 +280,54 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
             <p className="text-xs font-semibold" style={{ color: "#8b8ba7" }}>
               {t.financial.scenarioPrice}
             </p>
-            <div className="flex gap-1 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
+            <div className="flex flex-wrap items-start justify-center gap-2 rounded-xl p-1" style={{ backgroundColor: "#1e1e2e" }}>
               {SCENARIO_OPTIONS.map((option) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  onClick={() => setScenario(option.key)}
-                  className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
-                  style={{
-                    backgroundColor: scenario === option.key ? "#60a5fa" : "transparent",
-                    color: scenario === option.key ? "#0f0f1a" : "#8b8ba7",
-                  }}
-                >
-                  {t.financial.scenarios[option.key]}
-                </button>
+                <div key={option.key} className="flex flex-col items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setScenario(option.key)}
+                    className="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200"
+                    style={{
+                      backgroundColor:
+                        scenario === option.key
+                          ? "#60a5fa"
+                          : option.key === RECOMMENDED_SCENARIO_KEY
+                            ? "rgba(52, 211, 153, 0.08)"
+                            : "transparent",
+                      color:
+                        scenario === option.key
+                          ? "#0f0f1a"
+                          : option.key === RECOMMENDED_SCENARIO_KEY
+                            ? "#d7f7e7"
+                            : "#8b8ba7",
+                      boxShadow:
+                        option.key === RECOMMENDED_SCENARIO_KEY
+                          ? `inset 0 0 0 1px ${
+                              scenario === option.key ? "rgba(167, 243, 208, 0.7)" : "rgba(52, 211, 153, 0.3)"
+                            }, 0 0 ${scenario === option.key ? "18px" : "12px"} rgba(52, 211, 153, ${
+                              scenario === option.key ? "0.18" : "0.08"
+                            })`
+                          : "none",
+                      willChange: option.key === RECOMMENDED_SCENARIO_KEY ? "box-shadow, background-color" : "auto",
+                    }}
+                  >
+                    {t.financial.scenarios[option.key]}
+                  </button>
+                  {option.key === RECOMMENDED_SCENARIO_KEY ? (
+                    <span
+                      className="rounded-full px-2 py-0.5 text-[10px] font-semibold transition-all duration-200"
+                      style={{
+                        color: scenario === option.key ? "#eafff4" : "#b7efcf",
+                        backgroundColor: scenario === option.key ? "rgba(52, 211, 153, 0.18)" : "rgba(52, 211, 153, 0.1)",
+                        boxShadow: `inset 0 0 0 1px ${
+                          scenario === option.key ? "rgba(167, 243, 208, 0.5)" : "rgba(52, 211, 153, 0.24)"
+                        }`,
+                      }}
+                    >
+                      {t.financial.recommendedScenario}
+                    </span>
+                  ) : null}
+                </div>
               ))}
             </div>
           </div>
@@ -300,7 +337,10 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
               {t.financial.occupancy}
             </p>
             <div className="w-full rounded-xl px-4 py-3 border" style={{ backgroundColor: "#1e1e2e", borderColor: "#2e2e3e" }}>
-              <div className="text-center text-sm font-bold mb-3" style={{ color: "#60a5fa" }}>
+              <div
+                className="text-center text-sm font-bold mb-3 transition-colors duration-200"
+                style={{ color: occupancy === RECOMMENDED_OCCUPANCY ? "#34d399" : "#60a5fa" }}
+              >
                 {formatPercent(occupancy)}%
               </div>
               <input
@@ -317,9 +357,47 @@ const FinancialStudy = forwardRef(function FinancialStudy({ t }, forwardedRef) {
                 }}
               />
               <div className="flex flex-row-reverse justify-between mt-2 text-xs" style={{ color: "#8b8ba7" }}>
-                {[...occupancyOptions].reverse().map((option) => (
-                  <span key={option}>{formatPercent(option)}%</span>
-                ))}
+                {[...occupancyOptions].reverse().map((option) => {
+                  const isRecommended = option === RECOMMENDED_OCCUPANCY;
+                  const isSelected = occupancy === option;
+
+                  return (
+                    <div key={option} className="flex min-w-[44px] flex-col items-center gap-1">
+                      <span
+                        className="rounded-full px-2 py-0.5 transition-all duration-200"
+                        style={{
+                          color: isRecommended ? (isSelected ? "#eafff4" : "#b7efcf") : "#8b8ba7",
+                          backgroundColor: isRecommended
+                            ? isSelected
+                              ? "rgba(52, 211, 153, 0.18)"
+                              : "rgba(52, 211, 153, 0.08)"
+                            : "transparent",
+                          boxShadow: isRecommended
+                            ? `inset 0 0 0 1px ${
+                                isSelected ? "rgba(167, 243, 208, 0.5)" : "rgba(52, 211, 153, 0.24)"
+                              }`
+                            : "none",
+                        }}
+                      >
+                        {formatPercent(option)}%
+                      </span>
+                      {isRecommended ? (
+                        <span
+                          className="rounded-full px-2 py-0.5 text-[10px] font-semibold transition-all duration-200"
+                          style={{
+                            color: isSelected ? "#eafff4" : "#b7efcf",
+                            backgroundColor: isSelected ? "rgba(52, 211, 153, 0.16)" : "rgba(52, 211, 153, 0.08)",
+                            boxShadow: `inset 0 0 0 1px ${
+                              isSelected ? "rgba(167, 243, 208, 0.45)" : "rgba(52, 211, 153, 0.2)"
+                            }`,
+                          }}
+                        >
+                          {t.financial.recommendedOccupancy}
+                        </span>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
