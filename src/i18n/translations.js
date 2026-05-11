@@ -77,6 +77,11 @@ export const translations = {
         "نموذج السكن المشترك في حي العليا، الرياض، يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
       ltrContextDescription:
         "نموذج Shanqah LTR في حي العليا، الرياض، يعتمد على مزيج من وحدات 1BR و2BR مع افتراضات تشغيل طويلة الأجل.",
+      ltrUnitMixOneBedroom: "12 وحدة من نوع 1BR ضمن الدراسة",
+      ltrUnitMixOneBedroomIds: "A1, A2, A3, A4, A5, A7, A8, A10, A13, A14, A16, A19",
+      ltrUnitMixTwoBedroom: "8 وحدات من نوع 2BR ضمن الدراسة",
+      ltrUnitMixTwoBedroomIds: "A6, A9, A11, A12, A15, A17, A18, A20",
+      ltrStudySource: "القيم المالية المعروضة تعتمد مباشرة على جدول Shahqah LTR.",
       annualOccupancyText: "يعتمد هذا العرض على نسبة إشغال سنوية تبلغ",
       unitsWithinScenario: "وحدة سكنية ضمن السيناريو",
       monthlyPricePerUnit: "السعر الشهري / وحدة",
@@ -169,6 +174,11 @@ export const translations = {
         "A shared-living model in Olaya, Riyadh, offering serviced monthly units to benefit from growing demand for flexible housing.",
       ltrContextDescription:
         "The Shanqah LTR model in Olaya, Riyadh, uses a 1BR and 2BR unit mix with long-term rental operating assumptions.",
+      ltrUnitMixOneBedroom: "12 study units in the 1BR mix",
+      ltrUnitMixOneBedroomIds: "A1, A2, A3, A4, A5, A7, A8, A10, A13, A14, A16, A19",
+      ltrUnitMixTwoBedroom: "8 study units in the 2BR mix",
+      ltrUnitMixTwoBedroomIds: "A6, A9, A11, A12, A15, A17, A18, A20",
+      ltrStudySource: "Displayed financial values come directly from the Shahqah LTR study table.",
       annualOccupancyText: "This view assumes an annual occupancy rate of",
       unitsWithinScenario: "residential units under scenario",
       monthlyPricePerUnit: "Monthly Price / Unit",
