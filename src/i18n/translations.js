@@ -9,16 +9,16 @@ export const translations = {
       eyebrow: "دراسة جدوى العقار",
       title: "سنام العليا",
       description:
-        "دراسة جدوى لمبنى سكني من 22 وحدة في حي العليا، الرياض، تغطي نموذجي التشغيل Co-living وExecutive.",
+        "دراسة جدوى لمبنى سكني في حي العليا، الرياض، تغطي نموذجي التشغيل Co-living وLTR.",
       propertyTab: "ملخص العقار",
       financialTab: "دراسة مالية",
     },
     property: {
       totalUnitsLabel: "إجمالي الوحدات",
-      totalUnitsValue: "22 / 12",
+      totalUnitsValue: "22 / 20",
       totalUnitsUnit: "وحدة حسب التقسيمة",
       modelLabel: "نموذج المشروع",
-      modelValue: "Co-living / Executive",
+      modelValue: "Co-living / LTR",
       modelUnit: "نموذجان تشغيليان",
       locationLabel: "الموقع",
       locationValue: "العليا",
@@ -49,7 +49,7 @@ export const translations = {
       fixed: "ثابتة",
       fromAnnualRevenue: "من الإيراد السنوي",
       coLiving: "Co-living",
-      executive: "Executive",
+      executive: "LTR",
       scenarios: {
         worst: "محافظ",
         base: "واقعي",
@@ -75,6 +75,8 @@ export const translations = {
       studyContext: "سياق الدراسة",
       contextDescription:
         "نموذج السكن المشترك في حي العليا، الرياض، يوفر وحدات شهرية مخدومة للاستفادة من الطلب المتنامي على السكن المرن.",
+      ltrContextDescription:
+        "نموذج Shanqah LTR في حي العليا، الرياض، يعتمد على مزيج من وحدات 1BR و2BR مع افتراضات تشغيل طويلة الأجل.",
       annualOccupancyText: "يعتمد هذا العرض على نسبة إشغال سنوية تبلغ",
       unitsWithinScenario: "وحدة سكنية ضمن السيناريو",
       monthlyPricePerUnit: "السعر الشهري / وحدة",
@@ -99,16 +101,16 @@ export const translations = {
       eyebrow: "Property Feasibility Study",
       title: "Senam Olaya",
       description:
-        "Feasibility study for a 22-unit residential building in Olaya, Riyadh, covering Co-living and Executive operating models.",
+        "Feasibility study for a residential building in Olaya, Riyadh, covering Co-living and LTR operating models.",
       propertyTab: "Property Overview",
       financialTab: "Financial Study",
     },
     property: {
       totalUnitsLabel: "Total Units",
-      totalUnitsValue: "22 / 12",
+      totalUnitsValue: "22 / 20",
       totalUnitsUnit: "units depending on model",
       modelLabel: "Project Model",
-      modelValue: "Co-living / Executive",
+      modelValue: "Co-living / LTR",
       modelUnit: "Two operating models",
       locationLabel: "Location",
       locationValue: "Olaya",
@@ -139,7 +141,7 @@ export const translations = {
       fixed: "Fixed",
       fromAnnualRevenue: "from annual revenue",
       coLiving: "Co-living",
-      executive: "Executive",
+      executive: "LTR",
       scenarios: {
         worst: "Worst Case",
         base: "Base Case",
@@ -165,6 +167,8 @@ export const translations = {
       studyContext: "Study Context",
       contextDescription:
         "A shared-living model in Olaya, Riyadh, offering serviced monthly units to benefit from growing demand for flexible housing.",
+      ltrContextDescription:
+        "The Shanqah LTR model in Olaya, Riyadh, uses a 1BR and 2BR unit mix with long-term rental operating assumptions.",
       annualOccupancyText: "This view assumes an annual occupancy rate of",
       unitsWithinScenario: "residential units under scenario",
       monthlyPricePerUnit: "Monthly Price / Unit",

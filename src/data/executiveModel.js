@@ -1,51 +1,61 @@
 export const executiveModel = {
   worst: {
-    revenueAt100: 814961,
+    revenueAt100: 1672596,
     occupancy: {
-      50: { revenue: 407481, netRevenue: 325984, annualPerUnit: 27165, monthlyPerUnit: 2264 },
-      60: { revenue: 488977, netRevenue: 391181, annualPerUnit: 32598, monthlyPerUnit: 2717 },
-      70: { revenue: 570473, netRevenue: 456378, annualPerUnit: 38032, monthlyPerUnit: 3169 },
-      80: { revenue: 651969, netRevenue: 521575, annualPerUnit: 43465, monthlyPerUnit: 3622 },
-      90: { revenue: 733465, netRevenue: 586772, annualPerUnit: 48898, monthlyPerUnit: 4075 },
+      50: { revenue: 836298, netRevenue: 669038, annualPerUnit: 33452, monthlyPerUnit: 2788 },
+      60: { revenue: 1003558, netRevenue: 802846, annualPerUnit: 40142, monthlyPerUnit: 3345 },
+      70: { revenue: 1170817, netRevenue: 936654, annualPerUnit: 46833, monthlyPerUnit: 3903 },
+      80: { revenue: 1338077, netRevenue: 1070461, annualPerUnit: 53523, monthlyPerUnit: 4460 },
+      90: { revenue: 1505336, netRevenue: 1204269, annualPerUnit: 60213, monthlyPerUnit: 5018 },
     },
   },
-
   base: {
-    revenueAt100: 968218,
+    revenueAt100: 2030432,
     occupancy: {
-      50: { revenue: 484109, netRevenue: 387287, annualPerUnit: 32274, monthlyPerUnit: 2689 },
-      60: { revenue: 580931, netRevenue: 464745, annualPerUnit: 38729, monthlyPerUnit: 3227 },
-      70: { revenue: 677752, netRevenue: 542202, annualPerUnit: 45183, monthlyPerUnit: 3765 },
-      80: { revenue: 774574, netRevenue: 619659, annualPerUnit: 51638, monthlyPerUnit: 4303 },
-      90: { revenue: 871396, netRevenue: 697117, annualPerUnit: 58093, monthlyPerUnit: 4841 },
+      50: { revenue: 1015216, netRevenue: 812173, annualPerUnit: 40609, monthlyPerUnit: 3384 },
+      60: { revenue: 1218259, netRevenue: 974607, annualPerUnit: 48730, monthlyPerUnit: 4061 },
+      70: { revenue: 1421302, netRevenue: 1137042, annualPerUnit: 56852, monthlyPerUnit: 4738 },
+      80: { revenue: 1624345, netRevenue: 1299476, annualPerUnit: 64974, monthlyPerUnit: 5414 },
+      90: { revenue: 1827389, netRevenue: 1461911, annualPerUnit: 73096, monthlyPerUnit: 6091 },
     },
   },
-
   best: {
-    revenueAt100: 1087339,
+    revenueAt100: 2422511,
     occupancy: {
-      50: { revenue: 543670, netRevenue: 434936, annualPerUnit: 36245, monthlyPerUnit: 3020 },
-      60: { revenue: 652404, netRevenue: 521923, annualPerUnit: 43494, monthlyPerUnit: 3624 },
-      70: { revenue: 761138, netRevenue: 608910, annualPerUnit: 50743, monthlyPerUnit: 4229 },
-      80: { revenue: 869871, netRevenue: 695897, annualPerUnit: 57991, monthlyPerUnit: 4833 },
-      90: { revenue: 978605, netRevenue: 782884, annualPerUnit: 65240, monthlyPerUnit: 5437 },
+      50: { revenue: 1211255, netRevenue: 969004, annualPerUnit: 48450, monthlyPerUnit: 4038 },
+      60: { revenue: 1453506, netRevenue: 1162805, annualPerUnit: 58140, monthlyPerUnit: 4845 },
+      70: { revenue: 1695758, netRevenue: 1356606, annualPerUnit: 67830, monthlyPerUnit: 5653 },
+      80: { revenue: 1938009, netRevenue: 1550407, annualPerUnit: 77520, monthlyPerUnit: 6460 },
+      90: { revenue: 2180260, netRevenue: 1744208, annualPerUnit: 87210, monthlyPerUnit: 7268 },
     },
   },
 };
 
 export const executiveUnitPricing = {
-  studio: {
-    label: "Studio",
-    units: 6,
-    worst: 4021,
-    base: 4321,
-    best: 4621,
+  oneBedroom: {
+    label: "1BR",
+    units: 12,
+    unitIds: ["A1", "A2", "A3", "A4", "A5", "A7", "A8", "A10", "A13", "A14", "A16", "A19"],
+    worst: 6420,
+    base: 7793,
+    best: 9167,
+    projectionAt100: {
+      worst: 924447,
+      base: 1122223,
+      best: 1320000,
+    },
   },
   twoBedroom: {
     label: "2BR",
-    units: 6,
-    worst: 7298,
-    base: 9127,
-    best: 10481,
+    units: 8,
+    unitIds: ["A6", "A9", "A11", "A12", "A15", "A17", "A18", "A20"],
+    worst: 7793,
+    base: 9461,
+    best: 11484,
+    projectionAt100: {
+      worst: 748149,
+      base: 908208,
+      best: 1102511,
+    },
   },
 };
